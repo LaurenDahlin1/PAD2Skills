@@ -18,5 +18,11 @@ Many of these notes will be added to Readme.md
 `uv sync`
 7. Add packages
 `uv add --dev ipykernel pytest ruff`
+`uv add pydantic pyyaml`
 `uv add pandas dash plotly "docling" "torch<2.3" "numpy<2.0.0"`
+`uv sync`
+
+8. For image testing
+`brew install poppler`
+`uv add pdf2image pillow matplotlib`
 `uv sync`

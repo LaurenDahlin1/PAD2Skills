@@ -29,6 +29,7 @@ htmlcov/
 # IDE/Editor files
 .vscode/
 .idea/
+.obsidian/
 *.swp
 *.swo
 *~
@@ -40,6 +41,8 @@ htmlcov/
 
 # Data files (keep structure, ignore contents)
 data/bronze/pads_pdf/*.pdf
+data/bronze/pdf_images/
 data/silver/pads_md/*.md
+data/silver/markdown_testing/
 data/gold/*.csv
 data/gold/*.json

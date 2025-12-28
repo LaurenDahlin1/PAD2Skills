@@ -10,12 +10,14 @@ Pipeline: PDF -> Markdown -> LLM extraction -> structured outputs (JSON/CSV) -> 
 - Before edits: briefly restate the goal and the plan in 3–6 bullets.
 - Make changes in small steps. After each step: summarize changed files and how to verify.
 - Prefer minimal diffs. Do not reformat unrelated code.
+- Use comments and markdown cells, but do not number steps, especially in notebooks.
 
 ## Notebook-first development
 - Prototype and validate logic in `notebooks/` first (quick experiments, inspections).
 - After the approach is validated, implement the reusable version in `src/` as functions/modules.
 - `src/` should be importable and testable; notebooks should call into `src/` (not duplicate logic long-term).
 - If notebook code is promoted to `src/`, add/adjust tests (or at minimum a small smoke test).
+- Notebooks should have a title and brief description at the top in markdown.
 
 ## Repo conventions
 - Production code lives in `src/`.

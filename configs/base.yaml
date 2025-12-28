@@ -1,0 +1,8 @@
+# Base configuration for PAD2Skills project
+
+paths:
+  # Raw PDF files
+  raw_pdfs: data/bronze/pads_pdf
+  
+  # Converted markdown files
+  markdown: data/silver/pads_md
