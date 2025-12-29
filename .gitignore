@@ -38,11 +38,14 @@ htmlcov/
 .env
 .env.local
 *.env
+!.env.example
 
 # Data files (keep structure, ignore contents)
 data/bronze/pads_pdf/*.pdf
 data/bronze/pdf_images/
 data/silver/pads_md/*.md
+data/silver/pads_md_chunks/
 data/silver/markdown_testing/
+data/silver/document_sections/
 data/gold/*.csv
 data/gold/*.json
