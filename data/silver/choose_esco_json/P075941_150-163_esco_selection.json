@@ -1,0 +1,144 @@
+{
+  "results": [
+    {
+      "record_id": "150",
+      "chosen_esco": {
+        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
+        "label": "environmental protection manager",
+        "rank": 2,
+        "confidence": 0.75
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "151",
+      "chosen_esco": {
+        "esco_id": "72381086-cb6e-455e-a40b-ccb26550aab6",
+        "label": "power production plant operator",
+        "rank": 1,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "152",
+      "chosen_esco": {
+        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
+        "label": "monitoring and evaluation officer",
+        "rank": 1,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "153",
+      "chosen_esco": {
+        "esco_id": "cd4f41a5-87a6-4b3c-8ee3-14e6f457c365",
+        "label": "audit supervisor",
+        "rank": 5,
+        "confidence": 0.62
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "154",
+      "chosen_esco": {
+        "esco_id": "3e7bf729-4442-4b9f-ad5e-83111963795c",
+        "label": "ICT technician",
+        "rank": 2,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "155",
+      "chosen_esco": {
+        "esco_id": "0dd7e6cd-2e5a-4fae-9ce0-6a3622d4019f",
+        "label": "construction general supervisor",
+        "rank": 1,
+        "confidence": 0.78
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "156",
+      "chosen_esco": {
+        "esco_id": "0ee67d5e-8de9-48f0-97c5-ba23d486b1e9",
+        "label": "secretary of state",
+        "rank": 7,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "157",
+      "chosen_esco": {
+        "esco_id": "cb4f98c8-6b8d-41d8-87eb-a2a2033a3a25",
+        "label": "public procurement specialist",
+        "rank": 2,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "158",
+      "chosen_esco": {
+        "esco_id": "c9b2b0a7-0adc-4ca7-bf7c-dc95e18aeac7",
+        "label": "procurement support officer",
+        "rank": 2,
+        "confidence": 0.80
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "159",
+      "chosen_esco": {
+        "esco_id": "836f0a96-7546-4003-9fc8-714fc79199d4",
+        "label": "contract engineer",
+        "rank": 1,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "160",
+      "chosen_esco": {
+        "esco_id": "0dd7e6cd-2e5a-4fae-9ce0-6a3622d4019f",
+        "label": "construction general supervisor",
+        "rank": 6,
+        "confidence": 0.75
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "161",
+      "chosen_esco": {
+        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
+        "label": "civil engineer",
+        "rank": 2,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "162",
+      "chosen_esco": {
+        "esco_id": "579254cf-6d69-4889-9000-9c79dc568644",
+        "label": "mechanical engineer",
+        "rank": 1,
+        "confidence": 0.80
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "163",
+      "chosen_esco": {
+        "esco_id": "fcf9024e-277c-43c7-8ec8-8903e5c9c576",
+        "label": "water engineer",
+        "rank": 1,
+        "confidence": 0.90
+      },
+      "needs_manual_review": false
+    }
+  ]
+}
