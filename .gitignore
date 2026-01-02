@@ -47,6 +47,8 @@ data/silver/pads_md/*.md
 data/silver/pads_md_chunks/
 data/silver/markdown_testing/
 data/silver/document_sections/
-data/silver/occupations_skills/
+data/silver/occupations_skills_json/
+data/silver/esco_matching_csv/
+data/silver/esco_matching_json/
 data/gold/*.csv
 data/gold/*.json
