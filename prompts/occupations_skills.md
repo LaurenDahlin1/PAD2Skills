@@ -19,6 +19,16 @@ Your job: from the provided PAD chunk text, infer the occupations that will be n
 - Evidence strength rule: Only extract if the source_material_quote contains explicit activity/work scope language (e.g., action verbs or described services). Do not use cost/budget headings or line items alone as evidence.
 - Drop outcome-only lines: If the quote expresses a possibility/outcome (e.g., “can be diverted”) without an explicit actor/service/work scope, do not extract an occupation from it.
 
+### Excluded roles (DO NOT EXTRACT)
+- Do NOT extract **World Bank roles**, including but not limited to:
+  - Task Team Leader (TTL) / Task Team Leaders (TTLs)
+  - World Bank staff roles (e.g., Bank counsel, Bank procurement, Bank fiduciary, World Bank Task Team)
+- Do NOT extract **ministry/government official roles**, including but not limited to:
+  - Ministers, deputy ministers, permanent secretaries
+  - Directors/Director-Generals/Commissioners in ministries or government agencies
+  - Mayors, governors, prefects, other political appointees or elected officials
+  - Generic “government officials” / “ministry officials” / “senior government officials”
+
 ### Implementation-scope gate (no background-only inference)
 - Only extract occupations tied to activities the project will implement/procure/finance/support (i.e., implementation scope).
 - Do NOT extract occupations from background, context, or completed/past work. Examples of excluded patterns:
@@ -27,9 +37,13 @@ Your job: from the provided PAD chunk text, infer the occupations that will be n
 - Tense/intent requirement: The evidence sentence(s) must indicate future/ongoing project action (e.g., “will”, “shall”, “to be”, “planned”, “the project will finance/support/implement/provide”, “will be undertaken”, “will be constructed/installed/trained/supervised”).
 - If the text mentions a study/analysis/assessment already done, do not infer an occupation to do it unless the quote clearly states a new study/assessment will be undertaken under the project.
 
-- Only include occupations that would plausibly be hired/contracted in the borrower country (government/Project Implementation Unit, Project Coordination Unit, implementing agencies/local firms/non-governmental organizations/service providers/private operators).
-- Do NOT include occupations that are only needed at the World Bank (e.g., World Bank Task Team Lead, Bank counsel, Bank procurement staff).
-  - Exception: If an occupation is “fiduciary/procurement/legal” but is clearly hired locally for the Project Coordination Unit/implementing agency (e.g., “procurement specialist at the Project Coordination Unit”), it IS allowed.
+### In-country implementers (allowed)
+- Only include occupations that would plausibly be hired/contracted in the borrower country by implementers such as:
+  - Project Implementation Unit / Project Coordination Unit staff (non-official staff roles)
+  - Implementing agencies’ project staff (non-official staff roles)
+  - Local firms/contractors/service providers/operators and non-governmental organizations
+- Exception (still allowed): If an occupation is “fiduciary/procurement/legal” and is clearly hired locally for the Project Coordination Unit/implementing agency (e.g., “procurement specialist at the Project Coordination Unit”), it IS allowed.
+
 - The same occupation may appear multiple times if supported by different quotes.
 - Entries must be unique by (identified_occupation + source_material_quote). If both match an existing entry exactly, do not output a duplicate.
 - Do not invent quotes. If you cannot find a quote that supports an occupation, do not include that occupation.
@@ -71,9 +85,10 @@ Your job: from the provided PAD chunk text, infer the occupations that will be n
      - Background/status/completed work (ineligible)
      - Budget/table/line items (ineligible unless paired with implementation sentences)
      Only proceed if it is Implementation scope.
-  1) Identify whether it contains explicit activity/work scope language (verbs/services).
-  2) If yes, infer the most likely in-country occupation(s) that would perform that activity.
-  3) Then fill the fields using only information supported by that sentence/clause (and its tight surrounding context if needed).
+  1) Reject it if it only supports excluded roles (TTLs or ministry/government officials).
+  2) Identify whether it contains explicit activity/work scope language (verbs/services).
+  3) If yes, infer the most likely in-country occupation(s) that would perform that activity (excluding TTLs and ministry/government officials).
+  4) Then fill the fields using only information supported by that sentence/clause (and its tight surrounding context if needed).
 
 - Focus on implementation work implied by the PAD: design (only if stated), construction/installation, operations and maintenance, training, supervision, verification, community engagement, monitoring, data/analytics, regulatory/standards work, and program administration in-country.
 - Prefer specific occupations over generic ones (e.g., “Solar Photovoltaic Installation Technician” rather than “Technician” when the quote supports it).
