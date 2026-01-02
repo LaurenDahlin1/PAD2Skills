@@ -43,12 +43,28 @@ htmlcov/
 # Data files (keep structure, ignore contents)
 data/bronze/pads_pdf/*.pdf
 data/bronze/pdf_images/
+data/bronze/project_data/
+
 data/silver/pads_md/*.md
 data/silver/pads_md_chunks/
 data/silver/markdown_testing/
 data/silver/document_sections/
 data/silver/occupations_skills_json/
+data/silver/occupation_skills_csv/
 data/silver/esco_matching_csv/
 data/silver/esco_matching_json/
+data/silver/choose_esco_json/
+data/silver/choose_esco_csv/
+data/silver/abbreviations_md/
+data/silver/unique_esco_csv/
+data/silver/unique_esco_nace_csv/
+data/silver/embeddings/
+
 data/gold/*.csv
 data/gold/*.json
+
+# Keep reference data files
+!data/bronze/esco/
+!data/bronze/nace/
+!data/silver/esco_occupations_prepared.csv
+!data/silver/esco_nace_csv/
