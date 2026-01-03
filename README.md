@@ -17,6 +17,8 @@ PDF → Markdown → LLM Extraction → Structured Output → Visualization
 
 ### ✅ Completed
 - **PDF to Markdown Conversion**: Converts PAD PDFs to markdown using [docling](https://github.com/DS4SD/docling) with TableFormer for accurate table extraction
+- **Document Section Extraction**: Identifies and extracts major document sections from PADs using OpenAI API
+- **Abbreviation Extraction**: Extracts abbreviations and acronyms tables from PAD documents
 
 ### 🚧 In Progress
 - LLM-based extraction of occupations and skills
@@ -62,15 +64,17 @@ For more installation options, see the [uv documentation](https://docs.astral.sh
 
 ## Usage
 
-### PDF to Markdown Conversion
+### Step 1: PDF to Markdown Conversion
 
-The `src/pdf_conversion` module converts PAD PDFs to markdown format with accurate table extraction.
+The first step in the pipeline converts PAD PDFs to markdown format with accurate table extraction using [docling](https://github.com/DS4SD/docling) and TableFormer.
 
-**Place PDFs in the input directory:**
+#### 1. Place PDFs in the input directory
 ```bash
 # Add your PDF files to:
 data/bronze/pads_pdf/
 ```
+
+#### 2. Run the conversion
 
 **Convert all PDFs:**
 ```bash
@@ -82,7 +86,14 @@ uv run python -m src.pdf_conversion.cli
 uv run python -m src.pdf_conversion.cli --pdf yourfile.pdf
 ```
 
-**Additional options:**
+#### 3. Check the output
+```bash
+# Converted markdown files are saved to:
+data/silver/pads_md/
+```
+
+#### Additional Options
+
 ```bash
 # Overwrite existing markdown files
 uv run python -m src.pdf_conversion.cli --overwrite
@@ -94,13 +105,96 @@ uv run python -m src.pdf_conversion.cli --no-accurate-tables
 uv run python -m src.pdf_conversion.cli --config custom_config.yaml
 ```
 
-**Output location:**
-```bash
-# Converted markdown files are saved to:
-data/silver/pads_md/
-```
+#### Features
+- **Batch processing**: Convert all PDFs at once or specify individual files
+- **Smart skipping**: Automatically skips already-converted files (use `--overwrite` to force re-conversion)
+- **Accurate table extraction**: Uses TableFormer ACCURATE mode by default for better table handling
+- **Error resilience**: Continues processing if individual PDFs fail
 
 For detailed API usage and Python integration, see [docs/pdf_conversion.md](docs/pdf_conversion.md).
+
+### Step 2: Extract Document Sections
+
+The second step identifies and extracts the major sections (I., II., III., Annexes, etc.) from the PAD markdown files using OpenAI API.
+
+#### 1. Set up OpenAI API key
+```bash
+# Copy .env.example to .env and add your OpenAI API key
+cp .env.example .env
+# Edit .env and add: OPENAI_API_KEY=your-key-here
+```
+
+#### 2. Run section extraction
+
+**Extract sections from all markdown files:**
+```bash
+uv run python -m src.extraction.cli_sections
+```
+
+**Extract from a specific file:**
+```bash
+uv run python -m src.extraction.cli_sections --markdown P075941.md
+```
+
+#### 3. Check the output
+```bash
+# Section JSON files are saved to:
+data/silver/document_sections/
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing section files
+uv run python -m src.extraction.cli_sections --overwrite
+
+# Use custom config file
+uv run python -m src.extraction.cli_sections --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all markdown files or specify individual files
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
+- **Error resilience**: Continues processing if individual files fail
+- **Structured output**: Saves sections as JSON with section IDs, titles, and header text
+
+### Step 3: Extract Abbreviations
+
+The third step extracts abbreviations and acronyms from the PAD markdown files using OpenAI API.
+
+#### 1. Run abbreviation extraction
+
+**Extract abbreviations from all markdown files:**
+```bash
+uv run python -m src.extraction.cli_abbreviations
+```
+
+**Extract from a specific file:**
+```bash
+uv run python -m src.extraction.cli_abbreviations --markdown P075941.md
+```
+
+#### 2. Check the output
+```bash
+# Abbreviation markdown tables are saved to:
+data/silver/abbreviations_md/
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing abbreviation files
+uv run python -m src.extraction.cli_abbreviations --overwrite
+
+# Use custom config file
+uv run python -m src.extraction.cli_abbreviations --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all markdown files or specify individual files
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
+- **Error resilience**: Continues processing if individual files fail
+- **Markdown output**: Saves abbreviations as clean markdown tables
 
 ## Project Structure
 
@@ -113,22 +207,26 @@ PAD2Skills/
 │   │   ├── pads_pdf/   # PDF files
 │   │   └── pdf_images/ # PDF page images
 │   ├── silver/          # Processed data
-│   │   └── pads_md/    # Converted markdown files
+│   │   ├── pads_md/    # Converted markdown files
+│   │   ├── document_sections/  # Extracted document sections (JSON)
+│   │   └── abbreviations_md/   # Extracted abbreviations (markdown tables)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
 │   ├── notes.md        # Development notes
 │   └── pdf_conversion.md  # PDF conversion module docs
 ├── notebooks/           # Jupyter notebooks for exploration
 │   ├── 01_test_pdf_conversion.ipynb
-│   └── 02_pdf_to_images.ipynb
+│   ├── 02_document_sections.ipynb
+│   └── 99_pipeline.ipynb
 ├── src/                 # Source code
 │   ├── config.py       # Configuration management
 │   ├── pdf_conversion/ # PDF to markdown conversion
-│   ├── extraction/     # LLM-based extraction (planned)
+│   ├── extraction/     # Document section and abbreviation extraction
 │   ├── utils/          # Utility functions
 │   └── visualization/  # Visualization tools (planned)
 └── tests/               # Test suite
-    └── test_pdf_conversion.py
+    ├── test_pdf_conversion.py
+    └── test_extraction.py
 ```
 
 ## Development
