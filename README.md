@@ -196,6 +196,48 @@ uv run python -m src.extraction.cli_abbreviations --config custom_config.yaml
 - **Error resilience**: Continues processing if individual files fail
 - **Markdown output**: Saves abbreviations as clean markdown tables
 
+### Step 4: Create Chunked Markdown Files
+
+The fourth step splits the full PAD markdown files into separate chunks based on the extracted document sections, making it easier to process individual sections.
+
+#### 1. Run chunk creation
+
+**Create chunks from all markdown files:**
+```bash
+uv run python -m src.extraction.cli_chunks
+```
+
+**Create chunks from a specific file:**
+```bash
+uv run python -m src.extraction.cli_chunks --markdown P075941_1.md
+```
+
+#### 2. Check the output
+```bash
+# Chunked markdown files are saved to:
+data/silver/pads_md_chunks/
+# Example: P075941_0_strategic_context.md, P075941_1_project_development_objectives.md
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing chunk files
+uv run python -m src.extraction.cli_chunks --overwrite
+
+# Use custom config file
+uv run python -m src.extraction.cli_chunks --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all markdown files or specify individual files
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-creation)
+- **Error resilience**: Continues processing if individual files fail
+- **Clean filenames**: Removes `_1` suffix from project IDs and uses snake_case section titles
+- **Section-based splitting**: Uses extracted section information to accurately split documents
+
+**Note:** This step requires that section extraction (Step 2) has already been completed for the target files.
+
 ## Project Structure
 
 ```

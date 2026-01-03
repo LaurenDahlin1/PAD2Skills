@@ -7,8 +7,11 @@ import pytest
 
 from src.extraction.extractor import (
     DocumentExtractor,
+    create_chunks,
     extract_all_abbreviations,
     extract_all_sections,
+    find_header_in_markdown,
+    to_snake_case,
 )
 
 
@@ -23,7 +26,9 @@ def mock_openai_client():
 def sample_markdown(tmp_path):
     """Create a sample markdown file for testing."""
     md_file = tmp_path / "P075941.md"
-    md_file.write_text("# Sample PAD Document\n\nI. STRATEGIC CONTEXT\n\nSome content here.")
+    md_file.write_text(
+        "# Sample PAD Document\n\nI. STRATEGIC CONTEXT\n\nSome content here."
+    )
     return md_file
 
 
@@ -39,7 +44,11 @@ def test_extract_sections_success(mock_openai_client, sample_markdown, tmp_path)
     # Mock response
     mock_response = Mock()
     mock_item = Mock()
-    mock_item.content = [Mock(text='{"sections": [{"section_id": 0, "section_title": "STRATEGIC CONTEXT"}]}')]
+    mock_item.content = [
+        Mock(
+            text='{"sections": [{"section_id": 0, "section_title": "STRATEGIC CONTEXT"}]}'
+        )
+    ]
     mock_item.role = "assistant"
     mock_response.output = [mock_item]
 
@@ -68,7 +77,11 @@ def test_extract_abbreviations_success(mock_openai_client, sample_markdown, tmp_
     # Mock response
     mock_response = Mock()
     mock_item = Mock()
-    mock_item.content = [Mock(text="| Abbreviation | Definition |\n|---|---|\n| PAD | Project Appraisal Document |")]
+    mock_item.content = [
+        Mock(
+            text="| Abbreviation | Definition |\n|---|---|\n| PAD | Project Appraisal Document |"
+        )
+    ]
     mock_item.role = "assistant"
     mock_response.output = [mock_item]
 
@@ -193,3 +206,182 @@ def test_extract_specific_file(mock_openai_client, tmp_path):
 
     assert len(results["extracted"]) == 1
     assert "P075941.md" in results["extracted"]
+
+
+def test_to_snake_case():
+    """Test snake case conversion."""
+    assert to_snake_case("Strategic Context") == "strategic_context"
+    assert (
+        to_snake_case("Project Development Objectives")
+        == "project_development_objectives"
+    )
+    assert (
+        to_snake_case("IMPLEMENTATION (with special chars!)")
+        == "implementation_with_special_chars"
+    )
+    assert to_snake_case("Key   Multiple   Spaces") == "key_multiple_spaces"
+
+
+def test_find_header_in_markdown():
+    """Test finding headers with whitespace variations."""
+    markdown = "# Header 1\n\n## Header  with   spaces\n\nContent"
+
+    # Exact match
+    assert find_header_in_markdown(markdown, "# Header 1") == 0
+
+    # Normalized whitespace match
+    assert find_header_in_markdown(markdown, "## Header with spaces") > 0
+
+    # Not found
+    assert find_header_in_markdown(markdown, "## Nonexistent") == -1
+
+
+def test_create_chunks(tmp_path):
+    """Test creating chunked markdown files."""
+    # Create markdown directory with _1 suffix file
+    md_dir = tmp_path / "markdown"
+    md_dir.mkdir()
+    md_file = md_dir / "P075941_1.md"
+    md_content = """# I. STRATEGIC CONTEXT
+
+Some content about strategic context.
+
+# II. PROJECT DEVELOPMENT OBJECTIVES
+
+PDO content here.
+
+# III. IMPLEMENTATION
+
+Implementation details.
+"""
+    md_file.write_text(md_content)
+
+    # Create sections directory with sections JSON
+    sections_dir = tmp_path / "sections"
+    sections_dir.mkdir()
+    sections_file = sections_dir / "P075941_1_sections.json"
+    sections_data = {
+        "sections": [
+            {
+                "section_id": 0,
+                "section_title": "STRATEGIC CONTEXT",
+                "header_text": "# I. STRATEGIC CONTEXT",
+            },
+            {
+                "section_id": 1,
+                "section_title": "PROJECT DEVELOPMENT OBJECTIVES",
+                "header_text": "# II. PROJECT DEVELOPMENT OBJECTIVES",
+            },
+            {
+                "section_id": 2,
+                "section_title": "IMPLEMENTATION",
+                "header_text": "# III. IMPLEMENTATION",
+            },
+        ]
+    }
+    import json
+
+    sections_file.write_text(json.dumps(sections_data))
+
+    # Create output directory
+    output_dir = tmp_path / "chunks"
+
+    # Run chunking
+    results = create_chunks(
+        markdown_dir=md_dir,
+        sections_dir=sections_dir,
+        output_dir=output_dir,
+        specific_file=None,
+        overwrite=False,
+    )
+
+    # Verify results
+    assert len(results["chunked"]) == 1
+    assert "P075941" in results["chunked"]
+    assert len(results["failed"]) == 0
+
+    # Verify chunks were created (without _1 suffix)
+    chunk_files = list(output_dir.glob("P075941_*.md"))
+    assert len(chunk_files) == 3
+
+    # Check filenames
+    expected_files = [
+        "P075941_0_strategic_context.md",
+        "P075941_1_project_development_objectives.md",
+        "P075941_2_implementation.md",
+    ]
+    for expected in expected_files:
+        assert (output_dir / expected).exists()
+
+    # Verify content
+    chunk_content = (output_dir / "P075941_0_strategic_context.md").read_text()
+    assert "STRATEGIC CONTEXT" in chunk_content
+    assert "Some content about strategic context" in chunk_content
+
+
+def test_create_chunks_skip_existing(tmp_path):
+    """Test that existing chunks are skipped without overwrite."""
+    # Create markdown and sections
+    md_dir = tmp_path / "markdown"
+    md_dir.mkdir()
+    (md_dir / "P075941_1.md").write_text("# I. TEST\n\nContent")
+
+    sections_dir = tmp_path / "sections"
+    sections_dir.mkdir()
+    import json
+
+    sections_data = {
+        "sections": [
+            {"section_id": 0, "section_title": "TEST", "header_text": "# I. TEST"}
+        ]
+    }
+    (sections_dir / "P075941_1_sections.json").write_text(json.dumps(sections_data))
+
+    output_dir = tmp_path / "chunks"
+    output_dir.mkdir()
+    # Create existing chunk
+    (output_dir / "P075941_0_test.md").write_text("existing content")
+
+    # Run chunking without overwrite
+    results = create_chunks(
+        markdown_dir=md_dir,
+        sections_dir=sections_dir,
+        output_dir=output_dir,
+        specific_file=None,
+        overwrite=False,
+    )
+
+    # Should be skipped (chunks already exist)
+    assert len(results["chunked"]) == 0
+    assert len(results["skipped"]) == 1
+
+    # Verify existing content wasn't overwritten
+    assert (output_dir / "P075941_0_test.md").read_text() == "existing content"
+
+
+def test_create_chunks_no_sections_file(tmp_path):
+    """Test chunking when sections file doesn't exist."""
+    # Create markdown without sections
+    md_dir = tmp_path / "markdown"
+    md_dir.mkdir()
+    (md_dir / "P075941_1.md").write_text("# Content")
+
+    sections_dir = tmp_path / "sections"
+    sections_dir.mkdir()
+    # No sections file created
+
+    output_dir = tmp_path / "chunks"
+
+    # Run chunking
+    results = create_chunks(
+        markdown_dir=md_dir,
+        sections_dir=sections_dir,
+        output_dir=output_dir,
+        specific_file=None,
+        overwrite=False,
+    )
+
+    # Should be skipped due to missing sections file
+    assert len(results["skipped"]) == 1
+    assert len(results["chunked"]) == 0
+    assert len(results["failed"]) == 0

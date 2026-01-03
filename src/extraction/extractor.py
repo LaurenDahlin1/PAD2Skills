@@ -3,7 +3,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
 from openai import OpenAI
 
@@ -135,7 +135,7 @@ def extract_all_sections(
     output_dir: Path,
     specific_file: Optional[str] = None,
     overwrite: bool = False,
-) -> dict[str, list]:
+) -> Dict[str, List]:
     """
     Extract document sections from markdown file(s).
 
@@ -200,7 +200,7 @@ def extract_all_abbreviations(
     output_dir: Path,
     specific_file: Optional[str] = None,
     overwrite: bool = False,
-) -> dict[str, list]:
+) -> Dict[str, List]:
     """
     Extract abbreviations from markdown file(s).
 
@@ -254,5 +254,159 @@ def extract_all_abbreviations(
 
         except Exception as e:
             results["failed"].append((md_file.name, str(e)))
+
+    return results
+
+
+def to_snake_case(text: str) -> str:
+    """Convert text to lower snake case."""
+    # Replace spaces and special chars with underscores
+    text = re.sub(r"[^\w\s]", "", text)
+    text = re.sub(r"\s+", "_", text)
+    return text.lower()
+
+
+def normalize_whitespace(text: str) -> str:
+    """Normalize multiple spaces to single space."""
+    return re.sub(r"\s+", " ", text)
+
+
+def find_header_in_markdown(markdown: str, header_text: str) -> int:
+    """
+    Find header in markdown, handling whitespace differences.
+
+    Args:
+        markdown: Full markdown content
+        header_text: Header text to find
+
+    Returns:
+        Position of header in markdown, or -1 if not found
+    """
+    # Try exact match first
+    pos = markdown.find(header_text)
+    if pos != -1:
+        return pos
+
+    # Try with normalized whitespace
+    normalized_header = normalize_whitespace(header_text)
+
+    # Search using regex to match any amount of whitespace
+    pattern = re.escape(normalized_header).replace(r"\ ", r"\s+")
+    match = re.search(pattern, markdown)
+
+    if match:
+        return match.start()
+
+    return -1
+
+
+def create_chunks(
+    markdown_dir: Path,
+    sections_dir: Path,
+    output_dir: Path,
+    specific_file: Optional[str] = None,
+    overwrite: bool = False,
+) -> Dict[str, List]:
+    """
+    Split markdown files into section chunks based on sections JSON.
+
+    Args:
+        markdown_dir: Directory containing markdown files (with _1 suffix)
+        sections_dir: Directory containing sections JSON files
+        output_dir: Directory to save chunked markdown files
+        specific_file: Specific markdown filename to process (None = process all)
+        overwrite: Whether to overwrite existing output files
+
+    Returns:
+        Dictionary with chunking results:
+            - chunked: List of successfully processed project IDs
+            - skipped: List of skipped project IDs (no sections or already exists)
+            - failed: List of tuples (project_id, error_message)
+    """
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Get list of markdown files to process
+    if specific_file:
+        target_file = markdown_dir / specific_file
+        files_to_process = [target_file] if target_file.exists() else []
+    else:
+        files_to_process = list(markdown_dir.glob("*_1.md"))
+
+    # Track results
+    results = {"chunked": [], "skipped": [], "failed": []}
+
+    # Process each markdown file
+    for md_file in files_to_process:
+        # Extract project ID from filename (e.g., "P075941_1.md" -> "P075941")
+        project_id = md_file.stem.replace("_1", "")
+
+        sections_file = sections_dir / f"{project_id}_1_sections.json"
+
+        # Check if sections file exists
+        if not sections_file.exists():
+            results["skipped"].append(project_id)
+            continue
+
+        try:
+            # Load sections JSON
+            with open(sections_file, "r", encoding="utf-8") as f:
+                sections_data = json.load(f)
+
+            sections = sections_data["sections"]
+
+            # Read markdown content
+            markdown_content = md_file.read_text(encoding="utf-8")
+
+            # Split markdown by sections
+            chunks_created = 0
+            for i, section in enumerate(sections):
+                header_text = section["header_text"]
+                section_id = section["section_id"]
+                section_title = section["section_title"]
+
+                # Find the start position of this section
+                start_pos = find_header_in_markdown(markdown_content, header_text)
+
+                if start_pos == -1:
+                    # Skip sections that can't be found
+                    continue
+
+                # Find the end position (start of next section, or end of document)
+                if i < len(sections) - 1:
+                    next_header = sections[i + 1]["header_text"]
+                    end_pos = find_header_in_markdown(
+                        markdown_content[start_pos + len(header_text) :], next_header
+                    )
+                    if end_pos == -1:
+                        end_pos = len(markdown_content)
+                    else:
+                        end_pos = start_pos + len(header_text) + end_pos
+                else:
+                    end_pos = len(markdown_content)
+
+                # Extract the section content
+                section_content = markdown_content[start_pos:end_pos].rstrip()
+
+                # Generate filename (without _1 suffix)
+                snake_title = to_snake_case(section_title)
+                filename = f"{project_id}_{section_id}_{snake_title}.md"
+                chunk_file = output_dir / filename
+
+                # Check if chunk already exists
+                if chunk_file.exists() and not overwrite:
+                    continue
+
+                # Save the chunk
+                chunk_file.write_text(section_content, encoding="utf-8")
+                chunks_created += 1
+
+            if chunks_created > 0:
+                results["chunked"].append(project_id)
+            else:
+                results["skipped"].append(project_id)
+
+        except Exception as e:
+            results["failed"].append((project_id, str(e)))
 
     return results
