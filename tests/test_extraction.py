@@ -13,6 +13,7 @@ from src.extraction.extractor import (
     find_header_in_markdown,
     to_snake_case,
 )
+from src.extraction.summarizer import PADSummarizer, generate_all_summaries
 
 
 @pytest.fixture
@@ -385,3 +386,168 @@ def test_create_chunks_no_sections_file(tmp_path):
     assert len(results["skipped"]) == 1
     assert len(results["chunked"]) == 0
     assert len(results["failed"]) == 0
+
+
+# ===== PAD Summarizer Tests =====
+
+
+def test_summarizer_initialization():
+    """Test PADSummarizer initialization."""
+    with patch("src.extraction.summarizer.OpenAI") as mock_client:
+        summarizer = PADSummarizer()
+        assert summarizer.client is not None
+        mock_client.assert_called_once()
+
+
+def test_generate_summary_success(tmp_path):
+    """Test successful summary generation."""
+    # Create test chunks
+    chunks_dir = tmp_path / "chunks"
+    chunks_dir.mkdir()
+    
+    project_id = "P075941"
+    for i in range(4):
+        chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
+        chunk_file.write_text(f"# Section {i}\n\nContent for section {i}.")
+    
+    # Create abbreviations
+    abbr_dir = tmp_path / "abbr"
+    abbr_dir.mkdir()
+    abbr_file = abbr_dir / f"{project_id}_abbr.md"
+    abbr_file.write_text("| PAD | Project Appraisal Document |")
+    
+    # Mock OpenAI response
+    with patch("src.extraction.summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = "This is a test summary of the PAD document."
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+        
+        # Test summary generation
+        summarizer = PADSummarizer()
+        result = summarizer.generate_summary(
+            project_id=project_id,
+            chunks_dir=chunks_dir,
+            abbr_dir=abbr_dir,
+            num_chunks=4,
+        )
+        
+        assert result == "This is a test summary of the PAD document."
+        mock_client_instance.responses.create.assert_called_once()
+
+
+def test_generate_summary_no_abbreviations(tmp_path):
+    """Test summary generation without abbreviations."""
+    # Create test chunks
+    chunks_dir = tmp_path / "chunks"
+    chunks_dir.mkdir()
+    
+    project_id = "P075941"
+    for i in range(2):
+        chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
+        chunk_file.write_text(f"# Section {i}\n\nContent for section {i}.")
+    
+    # Mock OpenAI response
+    with patch("src.extraction.summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = "This is a test summary."
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+        
+        # Test summary generation without abbreviations
+        summarizer = PADSummarizer()
+        result = summarizer.generate_summary(
+            project_id=project_id,
+            chunks_dir=chunks_dir,
+            abbr_dir=None,
+            num_chunks=2,
+        )
+        
+        assert result == "This is a test summary."
+
+
+def test_generate_summary_missing_chunks(tmp_path):
+    """Test summary generation with missing chunks."""
+    chunks_dir = tmp_path / "chunks"
+    chunks_dir.mkdir()
+    
+    with patch("src.extraction.summarizer.OpenAI"):
+        summarizer = PADSummarizer()
+        
+        with pytest.raises(FileNotFoundError, match="No chunks found"):
+            summarizer.generate_summary(
+                project_id="P999999",
+                chunks_dir=chunks_dir,
+                num_chunks=4,
+            )
+
+
+def test_generate_all_summaries(tmp_path):
+    """Test batch summary generation."""
+    # Create test chunks for multiple projects
+    chunks_dir = tmp_path / "chunks"
+    chunks_dir.mkdir()
+    
+    projects = ["P075941", "P119893"]
+    for project_id in projects:
+        for i in range(2):
+            chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
+            chunk_file.write_text(f"# Section {i}\n\nContent.")
+    
+    # Create output directory
+    output_dir = tmp_path / "summaries"
+    
+    # Mock OpenAI responses
+    with patch("src.extraction.summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = "Test summary."
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+        
+        # Test batch generation
+        results = generate_all_summaries(
+            chunks_dir=chunks_dir,
+            output_dir=output_dir,
+            num_chunks=2,
+            overwrite=False,
+        )
+        
+        assert len(results["generated"]) == 2
+        assert len(results["skipped"]) == 0
+        assert len(results["failed"]) == 0
+        
+        # Verify output files were created
+        for project_id in projects:
+            output_file = output_dir / f"{project_id}_summary.txt"
+            assert output_file.exists()
+            assert output_file.read_text() == "Test summary."
+
+
+def test_generate_all_summaries_skip_existing(tmp_path):
+    """Test batch summary generation with existing files."""
+    # Create test chunks
+    chunks_dir = tmp_path / "chunks"
+    chunks_dir.mkdir()
+    
+    project_id = "P075941"
+    for i in range(2):
+        chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
+        chunk_file.write_text(f"# Section {i}\n\nContent.")
+    
+    # Create output directory with existing summary
+    output_dir = tmp_path / "summaries"
+    output_dir.mkdir()
+    existing_file = output_dir / f"{project_id}_summary.txt"
+    existing_file.write_text("Existing summary.")
+    
+    with patch("src.extraction.summarizer.OpenAI"):
+        results = generate_all_summaries(
+            chunks_dir=chunks_dir,
+            output_dir=output_dir,
+            num_chunks=2,
+            overwrite=False,
+        )
+        
+        assert len(results["generated"]) == 0
+        assert len(results["skipped"]) == 1
+        assert project_id in results["skipped"]

@@ -19,6 +19,8 @@ PDF → Markdown → LLM Extraction → Structured Output → Visualization
 - **PDF to Markdown Conversion**: Converts PAD PDFs to markdown using [docling](https://github.com/DS4SD/docling) with TableFormer for accurate table extraction
 - **Document Section Extraction**: Identifies and extracts major document sections from PADs using OpenAI API
 - **Abbreviation Extraction**: Extracts abbreviations and acronyms tables from PAD documents
+- **Document Chunking**: Splits PAD documents into section-based chunks for easier processing
+- **PAD Summary Generation**: Generates concise summaries of PAD documents using abbreviations and first sections
 
 ### 🚧 In Progress
 - LLM-based extraction of occupations and skills
@@ -238,6 +240,51 @@ uv run python -m src.extraction.cli_chunks --config custom_config.yaml
 
 **Note:** This step requires that section extraction (Step 2) has already been completed for the target files.
 
+### Step 5: Generate PAD Summaries
+
+The fifth step generates concise summaries of PAD documents by combining abbreviations and the first four document sections, using OpenAI API.
+
+#### 1. Run summary generation
+
+**Generate summaries for all projects:**
+```bash
+uv run python -m src.extraction.cli_summary
+```
+
+**Generate summary for a specific project:**
+```bash
+uv run python -m src.extraction.cli_summary --project P075941
+```
+
+#### 2. Check the output
+```bash
+# Summary text files are saved to:
+data/silver/pad_summaries/
+# Example: P075941_summary.txt
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing summary files
+uv run python -m src.extraction.cli_summary --overwrite
+
+# Use a different number of chunks (default: 4)
+uv run python -m src.extraction.cli_summary --num-chunks 6
+
+# Use custom config file
+uv run python -m src.extraction.cli_summary --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all projects or specify individual project IDs
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-generation)
+- **Error resilience**: Continues processing if individual projects fail
+- **Abbreviation integration**: Automatically incorporates abbreviations for better context
+- **Configurable chunks**: Control how many document chunks to include (default: 4)
+
+**Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better summaries.
+
 ## Project Structure
 
 ```
@@ -251,7 +298,9 @@ PAD2Skills/
 │   ├── silver/          # Processed data
 │   │   ├── pads_md/    # Converted markdown files
 │   │   ├── document_sections/  # Extracted document sections (JSON)
-│   │   └── abbreviations_md/   # Extracted abbreviations (markdown tables)
+│   │   ├── abbreviations_md/   # Extracted abbreviations (markdown tables)
+│   │   ├── pads_md_chunks/     # Section-based markdown chunks
+│   │   └── pad_summaries/      # Generated PAD summaries (text)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
 │   ├── notes.md        # Development notes
