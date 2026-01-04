@@ -21,10 +21,11 @@ PDF → Markdown → LLM Extraction → Structured Output → Visualization
 - **Abbreviation Extraction**: Extracts abbreviations and acronyms tables from PAD documents
 - **Document Chunking**: Splits PAD documents into section-based chunks for easier processing
 - **PAD Summary Generation**: Generates concise summaries of PAD documents using abbreviations and first sections
+- **Occupations and Skills Extraction**: Extracts occupations and skills from PAD chunks using OpenAI API
+- **ESCO Occupation Matching**: Matches PAD occupations to ESCO taxonomy using semantic similarity
 
 ### 🚧 In Progress
-- LLM-based extraction of occupations and skills
-- Structured output generation (JSON/CSV)
+- Structured output generation and aggregation (CSV)
 - Visualization and analysis tools
 
 ## Quick Start
@@ -285,6 +286,118 @@ uv run python -m src.extraction.cli_summary --config custom_config.yaml
 
 **Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better summaries.
 
+### Step 5: Extract Occupations and Skills
+
+The fifth step extracts occupations and skills from PAD document chunks using OpenAI API. This step analyzes each chunk to identify in-country occupations needed for project implementation.
+
+#### 1. Run occupation extraction
+
+**Extract occupations from all chunks:**
+```bash
+uv run python -m src.extraction.cli_occupations
+```
+
+**Extract from a specific project:**
+```bash
+uv run python -m src.extraction.cli_occupations --project P075941
+```
+
+#### 2. Check the output
+```bash
+# Occupation JSON files are saved to:
+data/silver/occupations_skills_json/
+# Example: P075941_0_occupations.json, P075941_1_occupations.json
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing occupation files
+uv run python -m src.extraction.cli_occupations --overwrite
+
+# Use custom config file
+uv run python -m src.extraction.cli_occupations --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all chunks or specify individual project IDs
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
+- **Error resilience**: Continues processing if individual chunks fail
+- **Abbreviation integration**: Automatically incorporates abbreviations for better context
+- **Structured output**: Saves extracted occupations and skills as JSON with occupation titles, activities, and evidence quotes
+
+**Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better extraction results.
+
+### Step 6: Match PAD Occupations to ESCO
+
+The seventh step matches occupations extracted from PAD documents to the European Skills, Competences, Qualifications and Occupations (ESCO) taxonomy using semantic similarity. This step has two utilities: one for preparing ESCO data with embeddings, and another for matching PAD occupations to ESCO.
+
+#### 1. Prepare ESCO data (run once)
+
+**Prepare ESCO occupations with embeddings:**
+```bash
+uv run python -m src.matching.cli_prepare_esco
+```
+
+This utility:
+- Reads ESCO occupations and skills from CSV files
+- Filters for essential skills and competences
+- Merges and flattens the data
+- Creates combined text fields for semantic matching
+- Generates embeddings using sentence-transformers
+
+#### 2. Match PAD occupations to ESCO
+
+**Match occupations for a specific project:**
+```bash
+uv run python -m src.matching.cli_match_pads P075941
+```
+
+**Match with custom parameters:**
+```bash
+# Get top 10 matches instead of default 20
+uv run python -m src.matching.cli_match_pads P075941 --top-k 10
+
+# Use larger chunk sizes (default: 75)
+uv run python -m src.matching.cli_match_pads P075941 --chunk-size 100
+
+# Skip diagnostic output
+uv run python -m src.matching.cli_match_pads P075941 --no-diagnostics
+```
+
+#### 3. Check the outputs
+
+```bash
+# Full matching results (CSV with top 20 matches):
+data/silver/esco_matching_csv/{project_id}_esco_matches.csv
+
+# Simplified diagnostic view (CSV):
+data/silver/esco_matching_csv/diagnostics/{project_id}_esco_matches_diagnostics.csv
+
+# Chunked JSON files (top 10 matches per chunk):
+data/silver/esco_matching_json/{project_id}_000-074_esco_matches.json
+```
+
+#### ESCO Preparation Options
+
+```bash
+# Regenerate embeddings (if model changed or data updated)
+uv run python -m src.matching.cli_prepare_esco --overwrite-embeddings
+
+# Use a different sentence-transformer model
+uv run python -m src.matching.cli_prepare_esco --model intfloat/multilingual-e5-large
+```
+
+#### Features
+- **Semantic matching**: Uses sentence-transformers for accurate occupation matching
+- **Cached embeddings**: ESCO embeddings are saved and reused for efficiency
+- **Top-K retrieval**: Returns the most similar ESCO occupations for each PAD occupation
+- **Multiple output formats**: CSV for analysis, JSON for application integration
+- **Chunked outputs**: Large result sets split into manageable JSON files
+- **Diagnostic mode**: Simplified CSV view for quick inspection
+
+**Note:** This step requires that occupation extraction has been completed for the target projects. The ESCO preparation utility should be run once before matching any projects.
+
 ## Project Structure
 
 ```
@@ -294,13 +407,20 @@ PAD2Skills/
 ├── data/
 │   ├── bronze/          # Raw input data
 │   │   ├── pads_pdf/   # PDF files
-│   │   └── pdf_images/ # PDF page images
+│   │   ├── pdf_images/ # PDF page images
+│   │   ├── esco/       # ESCO taxonomy CSV files
+│   │   └── nace/       # NACE industry codes
 │   ├── silver/          # Processed data
 │   │   ├── pads_md/    # Converted markdown files
 │   │   ├── document_sections/  # Extracted document sections (JSON)
 │   │   ├── abbreviations_md/   # Extracted abbreviations (markdown tables)
 │   │   ├── pads_md_chunks/     # Section-based markdown chunks
-│   │   └── pad_summaries/      # Generated PAD summaries (text)
+│   │   ├── pad_summaries/      # Generated PAD summaries (text)
+│   │   ├── esco_occupations_prepared.csv  # Prepared ESCO data
+│   │   ├── embeddings/         # Cached ESCO embeddings
+│   │   ├── esco_matching_csv/  # PAD-to-ESCO matching results (CSV)
+│   │   ├── esco_matching_json/ # PAD-to-ESCO matching results (JSON chunks)
+│   │   └── occupations_skills_json/  # Extracted occupations/skills (JSON)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
 │   ├── notes.md        # Development notes
@@ -313,6 +433,7 @@ PAD2Skills/
 │   ├── config.py       # Configuration management
 │   ├── pdf_conversion/ # PDF to markdown conversion
 │   ├── extraction/     # Document section and abbreviation extraction
+│   ├── matching/       # ESCO occupation matching
 │   ├── utils/          # Utility functions
 │   └── visualization/  # Visualization tools (planned)
 └── tests/               # Test suite
