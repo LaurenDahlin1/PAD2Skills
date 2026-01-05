@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from src.matching.esco_prepare import _combine_fields
+from src.matching.esco_selector import EscoSelector
 from src.matching.pad_matcher import _combine_pad_fields
 
 
@@ -181,3 +182,82 @@ class TestPadMatcher:
         assert "Managing team" in result
         # Empty list joins to empty string, which adds trailing space
         assert result.strip() == "Manager Managing team"
+
+
+class TestEscoSelector:
+    """Tests for ESCO selection functions."""
+
+    def test_load_section_names(self):
+        """Test loading and cleaning section names."""
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import Mock
+
+        # Create a temporary JSON file
+        sections_data = {
+            "sections": [
+                {"section_id": "sec_001", "header_text": "## Project Description  "},
+                {"section_id": "sec_002", "header_text": "###  Implementation   Plan"},
+            ]
+        }
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(sections_data, f)
+            temp_path = Path(f.name)
+
+        try:
+            # Pass a mock client to avoid needing OpenAI API key
+            mock_client = Mock()
+            selector = EscoSelector(client=mock_client)
+            section_mapping = selector._load_section_names(temp_path)
+
+            assert len(section_mapping) == 2
+            # Check that pound signs and extra whitespace are removed
+            assert section_mapping["sec_001"] == "Project Description"
+            assert section_mapping["sec_002"] == "Implementation Plan"
+
+        finally:
+            temp_path.unlink()
+
+    def test_load_section_names_missing_file(self):
+        """Test loading section names when file doesn't exist."""
+        from pathlib import Path
+        from unittest.mock import Mock
+
+        # Pass a mock client to avoid needing OpenAI API key
+        mock_client = Mock()
+        selector = EscoSelector(client=mock_client)
+        section_mapping = selector._load_section_names(Path("/nonexistent/file.json"))
+
+        # Should return empty dict without raising error
+        assert section_mapping == {}
+
+
+class TestUniqueEsco:
+    """Tests for unique ESCO matches creation."""
+
+    def test_format_skills_valid_list(self):
+        """Test formatting skills from a valid list string."""
+        from src.matching.unique_esco import format_skills
+
+        skills_str = "['Python', 'Java', 'C++']"
+        result = format_skills(skills_str)
+
+        assert result == '"Python", "Java", "C++"'
+
+    def test_format_skills_empty(self):
+        """Test formatting skills with empty/null input."""
+        from src.matching.unique_esco import format_skills
+
+        assert format_skills(None) == ""
+        assert format_skills(pd.NA) == ""
+
+    def test_format_skills_invalid(self):
+        """Test formatting skills with invalid input."""
+        from src.matching.unique_esco import format_skills
+
+        # Should return as-is if parsing fails
+        invalid_str = "not a list"
+        result = format_skills(invalid_str)
+        assert result == invalid_str

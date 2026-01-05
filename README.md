@@ -324,9 +324,33 @@ uv run python -m src.extraction.cli_occupations --config custom_config.yaml
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
 - **Error resilience**: Continues processing if individual chunks fail
 - **Abbreviation integration**: Automatically incorporates abbreviations for better context
+- **PAD summary integration**: Automatically incorporates PAD summaries for better context alignment
 - **Structured output**: Saves extracted occupations and skills as JSON with occupation titles, activities, and evidence quotes
 
-**Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better extraction results.
+**Note:** This step requires that chunks (Step 4) have already been created for the target projects. PAD summaries (Step 4a) and abbreviations (Step 3) are optional but recommended for better extraction results.
+
+#### Optional: Prepare PAD Occupations CSV
+
+For inspection and debugging, you can prepare CSV files from the occupation JSON extractions. This creates intermediate CSV files with flattened extractions and combined text fields.
+
+**Prepare CSVs for all projects:**
+```bash
+uv run python -m src.extraction.cli_prepare_occupations
+```
+
+**Prepare CSV for a specific project:**
+```bash
+uv run python -m src.extraction.cli_prepare_occupations --project P075941
+```
+
+**Output location:**
+```bash
+# CSV files are saved to:
+data/silver/occupation_skills_csv/
+# Example: P075941_pad_occupations_prepared.csv
+```
+
+**Note:** These CSV files are for inspection/debugging only and are not required for the production matching workflow (Step 6), which reads directly from the JSON files.
 
 ### Step 6: Match PAD Occupations to ESCO
 
@@ -398,6 +422,167 @@ uv run python -m src.matching.cli_prepare_esco --model intfloat/multilingual-e5-
 
 **Note:** This step requires that occupation extraction has been completed for the target projects. The ESCO preparation utility should be run once before matching any projects.
 
+### Step 7: Select Best ESCO Match
+
+The seventh step uses OpenAI API to select the single best ESCO occupation match for each PAD occupation from the candidates identified in Step 6. The selection considers PAD activity descriptions, occupation titles, and contextual quotes to make informed decisions. After selection, a second utility creates a unique matches file that aggregates all PAD data for each unique ESCO occupation.
+
+#### 7a. Run ESCO selection
+
+**Select best matches for a specific project:**
+```bash
+uv run python -m src.matching.cli_select_esco P075941
+```
+
+**Select with custom options:**
+```bash
+# Overwrite existing selection files
+uv run python -m src.matching.cli_select_esco P075941 --overwrite
+
+# Use custom input/output directories
+uv run python -m src.matching.cli_select_esco P075941 \
+    --input-dir data/silver/esco_matching_json \
+    --output-json-dir data/silver/choose_esco_json \
+    --output-csv-dir data/silver/choose_esco_csv
+```
+
+**Check the outputs:**
+```bash
+# Selection results per chunk (JSON):
+data/silver/choose_esco_json/{project_id}_000-074_esco_selection.json
+
+# Combined selections with PAD context (CSV):
+data/silver/choose_esco_csv/{project_id}_esco_selections.csv
+```
+
+**Features:**
+- **AI-powered selection**: Uses OpenAI API to intelligently select best matches
+- **Context-aware**: Considers activity descriptions and contextual quotes
+- **Confidence scoring**: Provides confidence levels for each selection
+- **Manual review flagging**: Identifies selections that need human review
+- **Batch processing**: Processes all matching chunks automatically
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-selection)
+
+#### 7b. Create unique ESCO matches
+
+**Generate unique matches for a specific project:**
+```bash
+uv run python -m src.matching.cli_unique_esco P075941
+```
+
+This utility:
+- Loads the ESCO selections CSV from step 7a
+- Filters out records flagged for manual review
+- Groups by unique ESCO occupation ID
+- Aggregates all PAD occupations, activities, skills, and quotes for each ESCO match
+- Merges with ESCO descriptions
+- Saves a flattened CSV with one row per unique ESCO occupation
+
+**Custom options:**
+```bash
+# Use custom directories
+uv run python -m src.matching.cli_unique_esco P075941 \
+    --selections-dir data/silver/choose_esco_csv \
+    --esco-dir data/bronze/esco \
+    --output-dir data/silver/unique_esco_csv
+```
+
+**Check the output:**
+```bash
+# Unique ESCO matches with aggregated PAD data:
+data/silver/unique_esco_csv/{project_id}_unique_matched.csv
+```
+
+**Features:**
+- **Automatic filtering**: Removes selections that need manual review
+- **Data aggregation**: Combines all PAD mentions for each unique ESCO occupation
+- **ESCO enrichment**: Adds full ESCO descriptions
+- **Clean formatting**: Properly quoted and comma-separated lists
+- **Smart skipping**: Skips if output already exists
+
+**Note:** This step requires that ESCO matching (Step 6) and ESCO selection (Step 7a) have been completed for the target project. You must have an OpenAI API key configured in your `.env` file.
+
+### Step 8: Add NACE Industry Codes
+
+The eighth step enriches ESCO occupation matches with NACE (Statistical Classification of Economic Activities) industry codes. This step has two utilities: one for creating ESCO-NACE mappings from RDF data, and another for selecting the best NACE group for each ESCO occupation using semantic similarity.
+
+#### 8a. Create ESCO-NACE group mappings (run once)
+
+**Create ESCO-NACE group mappings from RDF:**
+```bash
+uv run python -m src.nace.cli_esco_nace
+```
+
+This utility:
+- Loads NACE RDF data (sections, divisions, groups hierarchy)
+- Reads ESCO occupations CSV with NACE codes
+- Expands section/division codes to all their constituent groups
+- Creates comprehensive ESCO-to-NACE group mappings
+- Saves two outputs:
+  - `esco_nace_groups.csv`: Full mapping with ESCO IDs
+  - `inspect_esco_nace_groups.csv`: Unique NACE groups for inspection
+
+**Custom options:**
+```bash
+# Use custom input files
+uv run python -m src.nace.cli_esco_nace \
+    --nace-rdf data/bronze/nace/NACE_Rev.2.1.rdf \
+    --esco-occupations data/bronze/esco/occupations_en.csv \
+    --output-dir data/silver/esco_nace_csv
+```
+
+**Check the outputs:**
+```bash
+# ESCO-NACE group mappings:
+data/silver/esco_nace_csv/esco_nace_groups.csv
+
+# Unique NACE groups for inspection:
+data/silver/esco_nace_csv/inspect_esco_nace_groups.csv
+```
+
+#### 8b. Select best NACE group for ESCO occupations
+
+**Select best NACE group for a specific project:**
+```bash
+uv run python -m src.nace.cli_select_nace --project-id P075941
+```
+
+This utility:
+- Loads unique ESCO matches from Step 7b
+- Loads ESCO-NACE group mappings from Step 8a
+- Creates combined text from ESCO labels, descriptions, and PAD context
+- Uses sentence-transformers (E5 model) to encode texts
+- Selects best NACE group via semantic similarity for each ESCO occupation
+- Merges NACE metadata (section, division, group labels)
+
+**Custom options:**
+```bash
+# Use a different embedding model
+uv run python -m src.nace.cli_select_nace --project-id P075941 \
+    --model intfloat/multilingual-e5-large
+
+# Use custom directories
+uv run python -m src.nace.cli_select_nace --project-id P075941 \
+    --unique-esco data/silver/unique_esco_csv/P075941_unique_matched.csv \
+    --esco-nace-groups data/silver/esco_nace_csv/esco_nace_groups.csv \
+    --output-dir data/silver/unique_esco_nace_csv
+```
+
+**Check the output:**
+```bash
+# ESCO matches enriched with NACE industry codes:
+data/silver/unique_esco_nace_csv/{project_id}_unique_matched_with_nace.csv
+```
+
+**Features:**
+- **RDF parsing**: Extracts complete NACE hierarchy from RDF data
+- **Code expansion**: Automatically expands section/division codes to groups
+- **Semantic matching**: Uses embeddings for accurate industry classification
+- **Cached embeddings**: NACE group embeddings cached for efficiency
+- **Candidate filtering**: Only considers valid NACE groups for each ESCO occupation
+- **Complete metadata**: Includes section, division, and group labels
+
+**Note:** Step 8a (ESCO-NACE mapper) should be run once before processing any projects. Step 8b requires that unique ESCO matches (Step 7b) have been created for the target project.
+
 ## Project Structure
 
 ```
@@ -420,6 +605,11 @@ PAD2Skills/
 │   │   ├── embeddings/         # Cached ESCO embeddings
 │   │   ├── esco_matching_csv/  # PAD-to-ESCO matching results (CSV)
 │   │   ├── esco_matching_json/ # PAD-to-ESCO matching results (JSON chunks)
+│   │   ├── choose_esco_json/   # ESCO selection results (JSON)
+│   │   ├── choose_esco_csv/    # ESCO selection results (CSV)
+│   │   ├── unique_esco_csv/    # Unique ESCO matches with aggregated PAD data (CSV)
+│   │   ├── esco_nace_csv/      # ESCO-NACE group mappings (CSV)
+│   │   ├── unique_esco_nace_csv/  # ESCO matches with NACE codes (CSV)
 │   │   └── occupations_skills_json/  # Extracted occupations/skills (JSON)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
@@ -434,11 +624,14 @@ PAD2Skills/
 │   ├── pdf_conversion/ # PDF to markdown conversion
 │   ├── extraction/     # Document section and abbreviation extraction
 │   ├── matching/       # ESCO occupation matching
+│   ├── nace/           # NACE industry code processing
 │   ├── utils/          # Utility functions
 │   └── visualization/  # Visualization tools (planned)
 └── tests/               # Test suite
     ├── test_pdf_conversion.py
-    └── test_extraction.py
+    ├── test_extraction.py
+    ├── test_matching.py
+    └── test_nace.py
 ```
 
 ## Development

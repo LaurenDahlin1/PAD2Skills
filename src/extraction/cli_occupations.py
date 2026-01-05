@@ -36,6 +36,7 @@ def main():
     # Set up paths
     chunks_dir = project_root / "data" / "silver" / "pads_md_chunks"
     abbr_dir = project_root / "data" / "silver" / "abbreviations_md"
+    summary_dir = project_root / "data" / "silver" / "pad_summaries"
     output_dir = project_root / "data" / "silver" / "occupations_skills_json"
 
     # Verify chunks directory exists
@@ -50,6 +51,7 @@ def main():
     else:
         print("  Processing: all projects")
     print(f"  Abbreviations directory: {abbr_dir}")
+    print(f"  PAD summaries directory: {summary_dir}")
     print(f"  Output directory: {output_dir}")
     print()
 
@@ -57,6 +59,7 @@ def main():
         chunks_dir=chunks_dir,
         output_dir=output_dir,
         abbr_dir=abbr_dir,
+        summary_dir=summary_dir,
         specific_project=args.project,
         overwrite=args.overwrite,
     )

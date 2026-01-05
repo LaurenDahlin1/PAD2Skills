@@ -123,3 +123,52 @@ uv run python -m src.matching.cli_match_pads P075941 --no-diagnostics
 - `data/silver/esco_matching_csv/{project_id}_esco_matches.csv` - Full results with top K matches
 - `data/silver/esco_matching_csv/diagnostics/{project_id}_esco_matches_diagnostics.csv` - Simplified diagnostic view
 - `data/silver/esco_matching_json/{project_id}_000-074_esco_matches.json` - Chunked JSON files with top 10 matches per record
+
+### ESCO Selection
+
+The ESCO selection utility is in `src/matching/esco_selector.py`. It:
+- Processes JSON chunks from ESCO matching through OpenAI API
+- Uses a prompt to select the single best ESCO match for each PAD occupation
+- Combines selection results with PAD context data
+- Saves selections as JSON and CSV files
+
+**Usage from Python:**
+```python
+from pathlib import Path
+from src.matching.esco_selector import select_best_esco_matches
+
+input_dir = Path("data/silver/esco_matching_json")
+pad_occupations_dir = Path("data/silver/occupations_skills_json")
+sections_json_path = Path("data/silver/document_sections/P075941_sections.json")
+output_json_dir = Path("data/silver/choose_esco_json")
+output_csv_dir = Path("data/silver/choose_esco_csv")
+
+results_df = select_best_esco_matches(
+    input_dir=input_dir,
+    project_id="P075941",
+    pad_occupations_dir=pad_occupations_dir,
+    sections_json_path=sections_json_path,
+    output_json_dir=output_json_dir,
+    output_csv_dir=output_csv_dir,
+    overwrite=False
+)
+```
+
+**Usage from CLI:**
+```bash
+# Select best ESCO matches for PAD occupations
+uv run python -m src.matching.cli_select_esco P075941
+
+# Overwrite existing selection files
+uv run python -m src.matching.cli_select_esco P075941 --overwrite
+
+# Use custom input/output directories
+uv run python -m src.matching.cli_select_esco P075941 \
+    --input-dir data/silver/esco_matching_json \
+    --output-json-dir data/silver/choose_esco_json \
+    --output-csv-dir data/silver/choose_esco_csv
+```
+
+**Outputs:**
+- `data/silver/choose_esco_json/{project_id}_000-074_esco_selection.json` - Selection results per chunk
+- `data/silver/choose_esco_csv/{project_id}_esco_selections.csv` - Combined CSV with selections and PAD context
