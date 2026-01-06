@@ -289,9 +289,9 @@ uv run python -m src.extraction.cli_summary --config custom_config.yaml
 
 **Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better summaries.
 
-### Step 5: Extract Occupations and Skills
+### Step 6: Extract Occupations and Skills
 
-The fifth step extracts occupations and skills from PAD document chunks using OpenAI API. This step analyzes each chunk to identify in-country occupations needed for project implementation.
+The sixth step extracts occupations and skills from PAD document chunks using OpenAI API. This step analyzes each chunk to identify in-country occupations needed for project implementation.
 
 #### 1. Run occupation extraction
 
@@ -353,9 +353,9 @@ data/silver/occupation_skills_csv/
 # Example: P075941_pad_occupations_prepared.csv
 ```
 
-**Note:** These CSV files are for inspection/debugging only and are not required for the production matching workflow (Step 6), which reads directly from the JSON files.
+**Note:** These CSV files are for inspection/debugging only and are not required for the production matching workflow (Step 7), which reads directly from the JSON files.
 
-### Step 6: Match PAD Occupations to ESCO
+### Step 7: Match PAD Occupations to ESCO
 
 The seventh step matches occupations extracted from PAD documents to the European Skills, Competences, Qualifications and Occupations (ESCO) taxonomy using semantic similarity. This step has two utilities: one for preparing ESCO data with embeddings, and another for matching PAD occupations to ESCO.
 
@@ -425,9 +425,9 @@ uv run python -m src.matching.cli_prepare_esco --model intfloat/multilingual-e5-
 
 **Note:** This step requires that occupation extraction has been completed for the target projects. The ESCO preparation utility should be run once before matching any projects.
 
-### Step 7: Select Best ESCO Match
+### Step 8: Select Best ESCO Match
 
-The seventh step uses OpenAI API to select the single best ESCO occupation match for each PAD occupation from the candidates identified in Step 6. The selection considers PAD activity descriptions, occupation titles, and contextual quotes to make informed decisions. After selection, a second utility creates a unique matches file that aggregates all PAD data for each unique ESCO occupation.
+The eighth step uses OpenAI API to select the single best ESCO occupation match for each PAD occupation from the candidates identified in Step 7. The selection considers PAD activity descriptions, occupation titles, and contextual quotes to make informed decisions. After selection, a second utility creates a unique matches file that aggregates all PAD data for each unique ESCO occupation.
 
 #### 7a. Run ESCO selection
 
@@ -502,11 +502,11 @@ data/silver/unique_esco_csv/{project_id}_unique_matched.csv
 - **Clean formatting**: Properly quoted and comma-separated lists
 - **Smart skipping**: Skips if output already exists
 
-**Note:** This step requires that ESCO matching (Step 6) and ESCO selection (Step 7a) have been completed for the target project. You must have an OpenAI API key configured in your `.env` file.
+**Note:** This step requires that ESCO matching (Step 7) and ESCO selection (Step 8a) have been completed for the target project. You must have an OpenAI API key configured in your `.env` file.
 
-### Step 8: Add NACE Industry Codes
+### Step 9: Add NACE Industry Codes
 
-The eighth step enriches ESCO occupation matches with NACE (Statistical Classification of Economic Activities) industry codes. This step has two utilities: one for creating ESCO-NACE mappings from RDF data, and another for selecting the best NACE group for each ESCO occupation using semantic similarity.
+The ninth step enriches ESCO occupation matches with NACE (Statistical Classification of Economic Activities) industry codes. This step has two utilities: one for creating ESCO-NACE mappings from RDF data, and another for selecting the best NACE group for each ESCO occupation using semantic similarity.
 
 #### 8a. Create ESCO-NACE group mappings (run once)
 
@@ -584,11 +584,11 @@ data/silver/unique_esco_nace_csv/{project_id}_unique_matched_with_nace.csv
 - **Candidate filtering**: Only considers valid NACE groups for each ESCO occupation
 - **Complete metadata**: Includes section, division, and group labels
 
-**Note:** Step 8a (ESCO-NACE mapper) should be run once before processing any projects. Step 8b requires that unique ESCO matches (Step 7b) have been created for the target project.
+**Note:** Step 9a (ESCO-NACE mapper) should be run once before processing any projects. Step 9b requires that unique ESCO matches (Step 8b) have been created for the target project.
 
-### Step 9: Refine ESCO Skills
+### Step 10: Refine ESCO Skills
 
-The ninth step refines ESCO skills by evaluating their relevance to the specific PAD project context. This step loads ESCO occupations with NACE codes, merges with skills from the ESCO skills relation table, and uses OpenAI API to evaluate which skills are relevant and identify the top five most important skills for each occupation.
+The tenth step refines ESCO skills by evaluating their relevance to the specific PAD project context. This step loads ESCO occupations with NACE codes, merges with skills from the ESCO skills relation table, and uses OpenAI API to evaluate which skills are relevant and identify the top five most important skills for each occupation.
 
 #### Run skills refinement
 
@@ -636,7 +636,100 @@ This utility:
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-processing)
 - **Configurable chunking**: Adjust chunk size to balance API efficiency and rate limits
 
-**Note:** This step requires that ESCO occupations with NACE codes (Step 8b) and PAD summaries (Step 5) have been created for the target project. You must have an OpenAI API key configured in your `.env` file.
+**Note:** This step requires that ESCO occupations with NACE codes (Step 9b) and PAD summaries (Step 5) have been created for the target project. You must have an OpenAI API key configured in your `.env` file.
+
+### Step 11: Add O*NET Education Levels
+
+The twelfth step enriches ESCO occupation data with O*NET job zones, which indicate education and experience requirements. This step has two utilities: one for creating the ESCO-ONET crosswalk with LLM-generated substitutions for missing values (run once), and another for merging job zones onto project files.
+
+#### 11a. Create ESCO-ONET crosswalk (run once)
+
+**Create the crosswalk with job zones:**
+```bash
+uv run python -m src.onet.cli_create_crosswalk
+```
+
+This utility:
+- Loads ESCO-ONET crosswalk and O*NET job zones data
+- Merges crosswalk with job zones (5 levels from "Little or No Preparation" to "Extensive Preparation")
+- Identifies ESCO occupations missing from O*NET crosswalk
+- Uses OpenAI API to estimate job zones for missing occupations based on descriptions
+- Combines O*NET and LLM job zones with estimation method tracking
+- Saves comprehensive ESCO-ONET job zones mapping
+
+**Custom options:**
+```bash
+# Overwrite existing crosswalk file
+uv run python -m src.onet.cli_create_crosswalk --overwrite
+
+# Use different chunk size for LLM calls (default: 50)
+uv run python -m src.onet.cli_create_crosswalk --chunk-size 100
+
+# Use custom input/output files
+uv run python -m src.onet.cli_create_crosswalk \
+    --crosswalk-file data/bronze/onet/esco_onet_crosswalk.csv \
+    --job-zones-file data/bronze/onet/onet_job_zones.txt \
+    --esco-prepared-file data/silver/clean_esco/esco_occupations_prepared.csv \
+    --output-file data/silver/clean_esco/esco_onet_job_zones.csv
+```
+
+**Check the output:**
+```bash
+# ESCO-ONET job zones crosswalk:
+data/silver/clean_esco/esco_onet_job_zones.csv
+```
+
+**Features:**
+- **O*NET integration**: Maps ESCO to O*NET education/experience levels
+- **LLM gap-filling**: Estimates job zones for occupations missing from crosswalk
+- **Estimation tracking**: Flags each job zone as from unique O*NET match, minimum of multiple matches, or LLM estimate
+- **Comprehensive coverage**: Ensures all ESCO occupations have job zone assignments
+- **Smart skipping**: Skips if output already exists (use `--overwrite` to force recreation)
+
+#### 11b. Merge job zones onto project files
+
+**Merge for a specific project:**
+```bash
+uv run python -m src.onet.cli_merge_onet --project-id P075941
+```
+
+**Merge for all projects:**
+```bash
+uv run python -m src.onet.cli_merge_onet
+```
+
+This utility:
+- Loads the ESCO-ONET job zones crosswalk from Step 10a
+- Merges job zones onto project's unique ESCO-NACE file from Step 8b
+- Adds job zone number, descriptive label, and estimation method to each occupation
+- Saves enriched project file with education level requirements
+
+**Custom options:**
+```bash
+# Overwrite existing project files
+uv run python -m src.onet.cli_merge_onet --project-id P075941 --overwrite
+
+# Use custom directories
+uv run python -m src.onet.cli_merge_onet --project-id P075941 \
+    --job-zones-file data/silver/clean_esco/esco_onet_job_zones.csv \
+    --input-dir data/silver/unique_esco_nace_csv \
+    --output-dir data/silver/unique_esco_nace_onet_csv
+```
+
+**Check the output:**
+```bash
+# Project ESCO-NACE data enriched with O*NET job zones:
+data/silver/unique_esco_nace_onet_csv/{project_id}_esco_nace_onet.csv
+```
+
+**Features:**
+- **Batch or single project**: Process all projects or specify individual project ID
+- **Education requirements**: Adds O*NET job zones (1-5 scale) indicating preparation needed
+- **Descriptive labels**: Includes human-readable job zone labels
+- **Method transparency**: Shows whether job zone came from O*NET or LLM estimate
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-merge)
+
+**Note:** Step 12a (crosswalk creation) should be run once before processing any projects. Step 12b requires that unique ESCO-NACE files (Step 9b) have been created for the target projects. You must have an OpenAI API key configured in your `.env` file for Step 12a.
 
 ## Project Structure
 
@@ -649,7 +742,8 @@ PAD2Skills/
 │   │   ├── pads_pdf/   # PDF files
 │   │   ├── pdf_images/ # PDF page images
 │   │   ├── esco/       # ESCO taxonomy CSV files
-│   │   └── nace/       # NACE industry codes
+│   │   ├── nace/       # NACE industry codes
+│   │   └── onet/       # O*NET crosswalk and job zones data
 │   ├── silver/          # Processed data
 │   │   ├── pads_md/    # Converted markdown files
 │   │   ├── document_sections/  # Extracted document sections (JSON)
@@ -657,7 +751,8 @@ PAD2Skills/
 │   │   ├── pads_md_chunks/     # Section-based markdown chunks
 │   │   ├── pad_summaries/      # Generated PAD summaries (text)
 │   │   ├── clean_esco/
-│   │   │   └── esco_occupations_prepared.csv  # Prepared ESCO data
+│   │   │   ├── esco_occupations_prepared.csv  # Prepared ESCO data
+│   │   │   └── esco_onet_job_zones.csv  # ESCO-ONET job zones crosswalk
 │   │   ├── embeddings/         # Cached ESCO embeddings
 │   │   ├── esco_matching_csv/  # PAD-to-ESCO matching results (CSV)
 │   │   ├── esco_matching_json/ # PAD-to-ESCO matching results (JSON chunks)
@@ -666,6 +761,7 @@ PAD2Skills/
 │   │   ├── unique_esco_csv/    # Unique ESCO matches with aggregated PAD data (CSV)
 │   │   ├── esco_nace_csv/      # ESCO-NACE group mappings (CSV)
 │   │   ├── unique_esco_nace_csv/  # ESCO matches with NACE codes (CSV)
+│   │   ├── unique_esco_nace_onet_csv/  # ESCO matches with NACE codes and O*NET job zones (CSV)
 │   │   ├── esco_nace_w_skills_csv/  # ESCO with NACE codes and refined skills (CSV)
 │   │   └── occupations_skills_json/  # Extracted occupations/skills (JSON)
 │   └── gold/            # Final structured outputs
@@ -682,6 +778,7 @@ PAD2Skills/
 │   ├── extraction/     # Document section and abbreviation extraction
 │   ├── matching/       # ESCO occupation matching
 │   ├── nace/           # NACE industry code processing
+│   ├── onet/           # O*NET job zone integration
 │   ├── skills/         # ESCO skills refinement and evaluation
 │   ├── utils/          # Utility functions
 │   └── visualization/  # Visualization tools (planned)

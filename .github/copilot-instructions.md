@@ -26,9 +26,9 @@ Pipeline: PDF -> Markdown -> LLM extraction -> structured outputs (JSON/CSV) -> 
 
 ## Project commands
 - Install: `uv sync` and be sure to update notes.md if needed.
-- Lint: `ruff check .`
-- Format: `ruff format .`
-- Tests: `pytest -q`
+- Lint: `uv run ruff check .`
+- Format: `uv run ruff format .`
+- Tests: `uv run pytest -q`
 
 ## Python conventions
 - Target Python 3.11.
