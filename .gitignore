@@ -59,6 +59,7 @@ data/silver/choose_esco_csv/
 data/silver/abbreviations_md/*.md
 data/silver/unique_esco_csv/
 data/silver/unique_esco_nace_csv/
+data/silver/unique_esco_nace_onet_csv/
 data/silver/esco_nace_w_skills_csv/
 data/silver/embeddings/
 data/silver/selected_projects_data/
