@@ -55,6 +55,13 @@ def main() -> int:
     # Construct file paths
     selections_csv_path = selections_dir / f"{args.project_id}_esco_selections.csv"
     esco_occupations_path = esco_dir / "occupations_en.csv"
+    sections_json_path = (
+        project_root
+        / "data"
+        / "silver"
+        / "document_sections"
+        / f"{args.project_id}_1_sections.json"
+    )
     output_path = output_dir / f"{args.project_id}_unique_matched.csv"
 
     # Check if selections file exists
@@ -69,6 +76,11 @@ def main() -> int:
     if not esco_occupations_path.exists():
         print(f"✗ Error: ESCO occupations file not found: {esco_occupations_path}")
         return 1
+
+    # Check if sections file exists
+    if not sections_json_path.exists():
+        print(f"⚠ Warning: Sections file not found: {sections_json_path}")
+        print("  Section names will be empty in output")
 
     # Check if output already exists
     if output_path.exists():
@@ -86,6 +98,7 @@ def main() -> int:
             project_id=args.project_id,
             selections_csv_path=selections_csv_path,
             esco_occupations_path=esco_occupations_path,
+            sections_json_path=sections_json_path,
             output_path=output_path,
         )
 

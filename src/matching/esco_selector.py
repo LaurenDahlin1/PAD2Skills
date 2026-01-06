@@ -1,6 +1,7 @@
 """Select best ESCO occupation matches using OpenAI API."""
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -26,6 +27,10 @@ class EscoSelector:
             prompt_id: OpenAI prompt ID for ESCO selection
             prompt_version: Version of the prompt to use
         """
+        # Suppress verbose HTTP logging from OpenAI client
+        logging.getLogger("httpx").setLevel(logging.WARNING)
+        logging.getLogger("openai").setLevel(logging.WARNING)
+        
         self.client = client or OpenAI()
         self.prompt_id = prompt_id
         self.prompt_version = prompt_version
@@ -101,6 +106,15 @@ class EscoSelector:
         # Create output directory
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        # Clean up any existing output files for this project to avoid stale chunk files
+        # Only do this when overwriting to prevent stale chunks from previous runs
+        if overwrite:
+            existing_files = list(output_dir.glob(f"{project_id}_*_esco_selection.json"))
+            if existing_files:
+                print(f"Cleaning up {len(existing_files)} existing output files for {project_id}")
+                for old_file in existing_files:
+                    old_file.unlink()
+
         output_files = []
 
         for i, json_file in enumerate(json_files, 1):
@@ -148,7 +162,6 @@ class EscoSelector:
         json_selection_dir: Path,
         project_id: str,
         pad_occupations_dir: Path,
-        sections_json_path: Path,
         output_dir: Path,
     ) -> pd.DataFrame:
         """
@@ -158,7 +171,6 @@ class EscoSelector:
             json_selection_dir: Directory containing selection JSON files
             project_id: Project ID (e.g., "P075941")
             pad_occupations_dir: Directory containing PAD occupation JSON files
-            sections_json_path: Path to document sections JSON
             output_dir: Directory to save combined CSV
 
         Returns:
@@ -245,10 +257,6 @@ class EscoSelector:
         # Join selections with PAD data
         df = selections_df.merge(pad_df_prepared, on="record_id", how="left")
 
-        # Load section names
-        section_mapping = self._load_section_names(sections_json_path)
-        df["pad_section_name"] = df["pad_section_id"].map(section_mapping)
-
         # Reorder columns
         column_order = [
             "project_id",
@@ -263,7 +271,6 @@ class EscoSelector:
             "pad_skills",
             "pad_quote",
             "pad_section_id",
-            "pad_section_name",
         ]
         df = df[column_order]
 
@@ -276,25 +283,6 @@ class EscoSelector:
         print(f"  Rows: {len(df):,}, Columns: {len(df.columns)}")
 
         return df
-
-    def _load_section_names(self, sections_json_path: Path) -> dict[str, str]:
-        """Load and clean section names from JSON."""
-        if not sections_json_path.exists():
-            print(f"Warning: Sections JSON not found: {sections_json_path}")
-            return {}
-
-        with open(sections_json_path, "r", encoding="utf-8") as f:
-            sections_data = json.load(f)
-
-        section_mapping = {}
-        for section in sections_data.get("sections", []):
-            header = section.get("header_text", "")
-            # Remove pound signs and normalize whitespace
-            cleaned = re.sub(r"#", "", header)
-            cleaned = re.sub(r"\s+", " ", cleaned).strip()
-            section_mapping[section["section_id"]] = cleaned
-
-        return section_mapping
 
 
 def _load_pad_occupations(pad_occupations_dir: Path, project_id: str) -> pd.DataFrame:
@@ -347,7 +335,6 @@ def select_best_esco_matches(
     input_dir: Path,
     project_id: str,
     pad_occupations_dir: Path,
-    sections_json_path: Path,
     output_json_dir: Path,
     output_csv_dir: Path,
     client: OpenAI | None = None,
@@ -363,7 +350,6 @@ def select_best_esco_matches(
         input_dir: Directory containing esco_matching JSON files
         project_id: Project ID (e.g., "P075941")
         pad_occupations_dir: Directory containing PAD occupation JSON files
-        sections_json_path: Path to document sections JSON
         output_json_dir: Directory to save selection JSON files
         output_csv_dir: Directory to save combined CSV
         client: OpenAI client (if None, will create default client)
@@ -390,7 +376,6 @@ def select_best_esco_matches(
         json_selection_dir=output_json_dir,
         project_id=project_id,
         pad_occupations_dir=pad_occupations_dir,
-        sections_json_path=sections_json_path,
         output_dir=output_csv_dir,
     )
 

@@ -80,15 +80,6 @@ def main() -> int:
         project_root / "data" / "silver" / "occupations_skills_json"
     )
 
-    # Sections JSON path
-    sections_json_path = (
-        project_root
-        / "data"
-        / "silver"
-        / "document_sections"
-        / f"{args.project_id}_1_sections.json"
-    )
-
     # Validate input files exist
     if not input_dir.exists():
         print(f"Error: Input directory not found: {input_dir}", file=sys.stderr)
@@ -110,7 +101,6 @@ def main() -> int:
             input_dir=input_dir,
             project_id=args.project_id,
             pad_occupations_dir=pad_occupations_dir,
-            sections_json_path=sections_json_path,
             output_json_dir=output_json_dir,
             output_csv_dir=output_csv_dir,
             overwrite=args.overwrite,

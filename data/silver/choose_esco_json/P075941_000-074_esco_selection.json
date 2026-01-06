@@ -3,58 +3,58 @@
     {
       "record_id": "000",
       "chosen_esco": {
-        "esco_id": "7cdeb653-8f3d-4921-832b-b95f9d700a86",
-        "label": "electrical transmission system operator",
-        "rank": 1,
-        "confidence": 0.72
+        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
+        "label": "civil engineer",
+        "rank": 2,
+        "confidence": 0.78
       },
       "needs_manual_review": false
     },
     {
       "record_id": "001",
       "chosen_esco": {
-        "esco_id": "faed05c0-c1d1-4e34-b575-0dea96459e56",
-        "label": "construction manager",
-        "rank": 4,
-        "confidence": 0.86
+        "esco_id": "f1b89616-5dfe-40d4-8b02-58a6982b1a01",
+        "label": "substation engineer",
+        "rank": 1,
+        "confidence": 0.85
       },
       "needs_manual_review": false
     },
     {
       "record_id": "002",
       "chosen_esco": {
-        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
-        "label": "civil engineer",
-        "rank": 7,
-        "confidence": 0.86
+        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
+        "label": "hydropower engineer",
+        "rank": 1,
+        "confidence": 0.9
       },
       "needs_manual_review": false
     },
     {
       "record_id": "003",
       "chosen_esco": {
-        "esco_id": "579254cf-6d69-4889-9000-9c79dc568644",
-        "label": "mechanical engineer",
-        "rank": 9,
-        "confidence": 0.82
+        "esco_id": "bea99fea-0383-4c63-b944-70d4799de2c5",
+        "label": "project manager",
+        "rank": 1,
+        "confidence": 0.88
       },
       "needs_manual_review": false
     },
     {
       "record_id": "004",
       "chosen_esco": {
-        "esco_id": "1ff61522-8947-4c95-b589-cb0e0539a62b",
-        "label": "energy systems engineer",
-        "rank": 4,
-        "confidence": 0.78
+        "esco_id": "2808c7ec-cdb1-4b48-8429-e160a418ed0c",
+        "label": "regional development policy officer",
+        "rank": 6,
+        "confidence": 0.7
       },
       "needs_manual_review": false
     },
     {
       "record_id": "005",
       "chosen_esco": {
-        "esco_id": "12938d1a-eeb2-4b1e-a22b-f0bebeadfb73",
-        "label": "hydroelectric plant operator",
+        "esco_id": "579254cf-6d69-4889-9000-9c79dc568644",
+        "label": "mechanical engineer",
         "rank": 1,
         "confidence": 0.9
       },
@@ -63,490 +63,25 @@
     {
       "record_id": "006",
       "chosen_esco": {
-        "esco_id": "5e5b1b61-1351-4d3b-a293-deb3661715dd",
-        "label": "financial controller",
+        "esco_id": "86ca306c-ab99-420a-9e2a-aa73c5c4de22",
+        "label": "electrical engineer",
         "rank": 2,
-        "confidence": 0.78
+        "confidence": 0.88
       },
       "needs_manual_review": false
     },
     {
       "record_id": "007",
       "chosen_esco": {
-        "esco_id": "0561328b-875b-4ae2-9ba1-9af9049aef01",
-        "label": "procurement category specialist",
-        "rank": 4,
-        "confidence": 0.62
+        "esco_id": "72381086-cb6e-455e-a40b-ccb26550aab6",
+        "label": "power production plant operator",
+        "rank": 7,
+        "confidence": 0.7
       },
       "needs_manual_review": false
     },
     {
       "record_id": "008",
-      "chosen_esco": {
-        "esco_id": "114e1eff-215e-47df-8e10-45a5b72f8197",
-        "label": "renewable energy consultant",
-        "rank": 1,
-        "confidence": 0.8
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "009",
-      "chosen_esco": {
-        "esco_id": "30f3ea93-882a-4525-841c-1d5b4b64076f",
-        "label": "financial manager",
-        "rank": 2,
-        "confidence": 0.78
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "010",
-      "chosen_esco": {
-        "esco_id": "5e4d156a-1f05-4b2c-b0f0-5abb82d52ed6",
-        "label": "bank account manager",
-        "rank": 1,
-        "confidence": 0.75
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "011",
-      "chosen_esco": {
-        "esco_id": "78db356f-a96a-4456-ab29-2de62e52f830",
-        "label": "public finance accountant",
-        "rank": 10,
-        "confidence": 0.7
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "012",
-      "chosen_esco": {
-        "esco_id": "fdfce14e-992d-4ff4-9f9d-7a353c75654e",
-        "label": "corporate lawyer",
-        "rank": 7,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "013",
-      "chosen_esco": {
-        "esco_id": "12938d1a-eeb2-4b1e-a22b-f0bebeadfb73",
-        "label": "hydroelectric plant operator",
-        "rank": 1,
-        "confidence": 0.85
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "014",
-      "chosen_esco": {
-        "esco_id": "86ca306c-ab99-420a-9e2a-aa73c5c4de22",
-        "label": "electrical engineer",
-        "rank": 1,
-        "confidence": 0.72
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "015",
-      "chosen_esco": {
-        "esco_id": "7ef064b1-aab8-4818-a468-8f17acbfd995",
-        "label": "hydropower technician",
-        "rank": 6,
-        "confidence": 0.8
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "016",
-      "chosen_esco": {
-        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
-        "label": "hydropower engineer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "017",
-      "chosen_esco": {
-        "esco_id": "7cdeb653-8f3d-4921-832b-b95f9d700a86",
-        "label": "electrical transmission system operator",
-        "rank": 4,
-        "confidence": 0.7
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "018",
-      "chosen_esco": {
-        "esco_id": "58db3ac6-5217-4d46-8a4c-126598be1d13",
-        "label": "electric power generation engineer",
-        "rank": 1,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "019",
-      "chosen_esco": {
-        "esco_id": "7cdeb653-8f3d-4921-832b-b95f9d700a86",
-        "label": "electrical transmission system operator",
-        "rank": 1,
-        "confidence": 0.75
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "020",
-      "chosen_esco": {
-        "esco_id": "7cdeb653-8f3d-4921-832b-b95f9d700a86",
-        "label": "electrical transmission system operator",
-        "rank": 1,
-        "confidence": 0.7
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "021",
-      "chosen_esco": {
-        "esco_id": "b2cede50-82bb-4684-9f11-1930e12ad672",
-        "label": "energy engineer",
-        "rank": 3,
-        "confidence": 0.78
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "022",
-      "chosen_esco": {
-        "esco_id": "ac37627c-a999-4779-997e-9795cc4f9a3d",
-        "label": "power distribution engineer",
-        "rank": 1,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "023",
-      "chosen_esco": {
-        "esco_id": "fddb7bd8-f176-4dc8-9d12-32b6072452c9",
-        "label": "electric meter technician",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "024",
-      "chosen_esco": {
-        "esco_id": "cb4f98c8-6b8d-41d8-87eb-a2a2033a3a25",
-        "label": "public procurement specialist",
-        "rank": 2,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "025",
-      "chosen_esco": {
-        "esco_id": "4f49df98-98b8-4a9e-98ad-9c5557817eba",
-        "label": "strategic planning manager",
-        "rank": 10,
-        "confidence": 0.7
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "026",
-      "chosen_esco": {
-        "esco_id": "7052fd94-f563-46a9-8e2d-cba6c20f3e71",
-        "label": "overhead line worker",
-        "rank": 1,
-        "confidence": 0.65
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "027",
-      "chosen_esco": {
-        "esco_id": "7cdeb653-8f3d-4921-832b-b95f9d700a86",
-        "label": "electrical transmission system operator",
-        "rank": 1,
-        "confidence": 0.7
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "028",
-      "chosen_esco": null,
-      "needs_manual_review": true
-    },
-    {
-      "record_id": "029",
-      "chosen_esco": {
-        "esco_id": "ac37627c-a999-4779-997e-9795cc4f9a3d",
-        "label": "power distribution engineer",
-        "rank": 1,
-        "confidence": 0.8
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "030",
-      "chosen_esco": {
-        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
-        "label": "environmental protection manager",
-        "rank": 1,
-        "confidence": 0.88
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "031",
-      "chosen_esco": {
-        "esco_id": "d6ef013f-57e9-4100-bbe5-3e4930664dee",
-        "label": "social services policy officer",
-        "rank": 1,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "032",
-      "chosen_esco": {
-        "esco_id": "0561328b-875b-4ae2-9ba1-9af9049aef01",
-        "label": "procurement category specialist",
-        "rank": 1,
-        "confidence": 0.87
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "033",
-      "chosen_esco": {
-        "esco_id": "30f3ea93-882a-4525-841c-1d5b4b64076f",
-        "label": "financial manager",
-        "rank": 4,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "034",
-      "chosen_esco": {
-        "esco_id": "ac37627c-a999-4779-997e-9795cc4f9a3d",
-        "label": "power distribution engineer",
-        "rank": 1,
-        "confidence": 0.8
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "035",
-      "chosen_esco": {
-        "esco_id": "77abfaec-a250-4765-95fa-6091e8da1bba",
-        "label": "electromechanical engineer",
-        "rank": 2,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "036",
-      "chosen_esco": {
-        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
-        "label": "civil engineer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "037",
-      "chosen_esco": {
-        "esco_id": "186ef31e-f26f-4320-a307-c5f95d6cb284",
-        "label": "consultant social worker",
-        "rank": 5,
-        "confidence": 0.65
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "038",
-      "chosen_esco": {
-        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
-        "label": "hydropower engineer",
-        "rank": 2,
-        "confidence": 0.88
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "039",
-      "chosen_esco": {
-        "esco_id": "31854d78-3615-43a4-aa3a-c597ecb20ceb",
-        "label": "legal consultant",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "040",
-      "chosen_esco": {
-        "esco_id": "fcf9024e-277c-43c7-8ec8-8903e5c9c576",
-        "label": "water engineer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "041",
-      "chosen_esco": {
-        "esco_id": "cd7b838c-51f6-41ec-9067-bb974c0f991b",
-        "label": "communication manager",
-        "rank": 3,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "042",
-      "chosen_esco": {
-        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
-        "label": "monitoring and evaluation officer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "043",
-      "chosen_esco": {
-        "esco_id": "9e285322-2cfa-430f-9b66-41be57d698e2",
-        "label": "public affairs consultant",
-        "rank": 1,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "044",
-      "chosen_esco": {
-        "esco_id": "3d999108-f37a-4087-a936-b2911240b8c2",
-        "label": "volunteer manager",
-        "rank": 1,
-        "confidence": 0.6
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "045",
-      "chosen_esco": {
-        "esco_id": "c0489e22-6a1b-4e52-974a-eb71bbb42134",
-        "label": "public relations officer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "046",
-      "chosen_esco": {
-        "esco_id": "3765a20d-5160-4e8f-82f1-ad7872b9db24",
-        "label": "information manager",
-        "rank": 2,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "047",
-      "chosen_esco": {
-        "esco_id": "9e285322-2cfa-430f-9b66-41be57d698e2",
-        "label": "public affairs consultant",
-        "rank": 1,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "048",
-      "chosen_esco": {
-        "esco_id": "a74f6c51-37e5-423e-aa5b-044e98663027",
-        "label": "web content manager",
-        "rank": 2,
-        "confidence": 0.88
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "049",
-      "chosen_esco": {
-        "esco_id": "cd7b838c-51f6-41ec-9067-bb974c0f991b",
-        "label": "communication manager",
-        "rank": 6,
-        "confidence": 0.8
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "050",
-      "chosen_esco": {
-        "esco_id": "cd7b838c-51f6-41ec-9067-bb974c0f991b",
-        "label": "communication manager",
-        "rank": 4,
-        "confidence": 0.78
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "051",
-      "chosen_esco": {
-        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
-        "label": "monitoring and evaluation officer",
-        "rank": 3,
-        "confidence": 0.85
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "052",
-      "chosen_esco": {
-        "esco_id": "9e285322-2cfa-430f-9b66-41be57d698e2",
-        "label": "public affairs consultant",
-        "rank": 1,
-        "confidence": 0.84
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "053",
-      "chosen_esco": {
-        "esco_id": "58db3ac6-5217-4d46-8a4c-126598be1d13",
-        "label": "electric power generation engineer",
-        "rank": 1,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "054",
-      "chosen_esco": {
-        "esco_id": "30f3ea93-882a-4525-841c-1d5b4b64076f",
-        "label": "financial manager",
-        "rank": 3,
-        "confidence": 0.82
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "055",
       "chosen_esco": {
         "esco_id": "fb7e2f4f-1545-42f1-972e-94082e49c6dc",
         "label": "building construction worker",
@@ -556,30 +91,500 @@
       "needs_manual_review": false
     },
     {
-      "record_id": "056",
+      "record_id": "009",
       "chosen_esco": {
-        "esco_id": "72381086-cb6e-455e-a40b-ccb26550aab6",
-        "label": "power production plant operator",
+        "esco_id": "f1b89616-5dfe-40d4-8b02-58a6982b1a01",
+        "label": "substation engineer",
+        "rank": 1,
+        "confidence": 0.87
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "010",
+      "chosen_esco": {
+        "esco_id": "cbde1a3a-406d-4d17-b30b-03981925035d",
+        "label": "energy analyst",
+        "rank": 5,
+        "confidence": 0.65
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "011",
+      "chosen_esco": {
+        "esco_id": "974d4eab-fbee-4c52-b16e-73bdd8c25b53",
+        "label": "lawyer",
+        "rank": 4,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "012",
+      "chosen_esco": {
+        "esco_id": "78db356f-a96a-4456-ab29-2de62e52f830",
+        "label": "public finance accountant",
+        "rank": 3,
+        "confidence": 0.7
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "013",
+      "chosen_esco": {
+        "esco_id": "39e9fc8f-02bd-4577-b603-2dc96204ce74",
+        "label": "community development officer",
         "rank": 1,
         "confidence": 0.9
       },
       "needs_manual_review": false
     },
     {
-      "record_id": "057",
+      "record_id": "014",
+      "chosen_esco": {
+        "esco_id": "1ff61522-8947-4c95-b589-cb0e0539a62b",
+        "label": "energy systems engineer",
+        "rank": 8,
+        "confidence": 0.7
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "015",
+      "chosen_esco": {
+        "esco_id": "86ca306c-ab99-420a-9e2a-aa73c5c4de22",
+        "label": "electrical engineer",
+        "rank": 5,
+        "confidence": 0.7
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "016",
+      "chosen_esco": {
+        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
+        "label": "hydropower engineer",
+        "rank": 1,
+        "confidence": 0.75
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "017",
+      "chosen_esco": {
+        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
+        "label": "hydropower engineer",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "018",
+      "chosen_esco": {
+        "esco_id": "fddb7bd8-f176-4dc8-9d12-32b6072452c9",
+        "label": "electric meter technician",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "019",
+      "chosen_esco": {
+        "esco_id": "ac37627c-a999-4779-997e-9795cc4f9a3d",
+        "label": "power distribution engineer",
+        "rank": 1,
+        "confidence": 0.78
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "020",
+      "chosen_esco": {
+        "esco_id": "91f93dc4-1b71-4053-b6fb-c579ec19303a",
+        "label": "procurement department manager",
+        "rank": 1,
+        "confidence": 0.85
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "021",
+      "chosen_esco": {
+        "esco_id": "c89afd9a-7dad-4bae-9315-5fcadd9ad8b6",
+        "label": "electricity distribution technician",
+        "rank": 6,
+        "confidence": 0.85
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "022",
+      "chosen_esco": {
+        "esco_id": "ac37627c-a999-4779-997e-9795cc4f9a3d",
+        "label": "power distribution engineer",
+        "rank": 1,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "023",
+      "chosen_esco": {
+        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
+        "label": "environmental protection manager",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "024",
+      "chosen_esco": {
+        "esco_id": "1a46d0f0-93d7-44d1-bff9-58e3f21bd4c4",
+        "label": "social service consultant",
+        "rank": 1,
+        "confidence": 0.78
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "025",
+      "chosen_esco": {
+        "esco_id": "0561328b-875b-4ae2-9ba1-9af9049aef01",
+        "label": "procurement category specialist",
+        "rank": 1,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "026",
+      "chosen_esco": {
+        "esco_id": "5e5b1b61-1351-4d3b-a293-deb3661715dd",
+        "label": "financial controller",
+        "rank": 2,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "027",
+      "chosen_esco": {
+        "esco_id": "a005f8a2-2d8a-433e-8d89-13575f822fd4",
+        "label": "energy manager",
+        "rank": 5,
+        "confidence": 0.7
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "028",
+      "chosen_esco": {
+        "esco_id": "77abfaec-a250-4765-95fa-6091e8da1bba",
+        "label": "electromechanical engineer",
+        "rank": 2,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "029",
       "chosen_esco": {
         "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
         "label": "civil engineer",
-        "rank": 7,
-        "confidence": 0.62
+        "rank": 2,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "030",
+      "chosen_esco": {
+        "esco_id": "1a46d0f0-93d7-44d1-bff9-58e3f21bd4c4",
+        "label": "social service consultant",
+        "rank": 3,
+        "confidence": 0.65
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "031",
+      "chosen_esco": {
+        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
+        "label": "hydropower engineer",
+        "rank": 2,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "032",
+      "chosen_esco": {
+        "esco_id": "31854d78-3615-43a4-aa3a-c597ecb20ceb",
+        "label": "legal consultant",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "033",
+      "chosen_esco": {
+        "esco_id": "fcf9024e-277c-43c7-8ec8-8903e5c9c576",
+        "label": "water engineer",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "034",
+      "chosen_esco": {
+        "esco_id": "9e285322-2cfa-430f-9b66-41be57d698e2",
+        "label": "public affairs consultant",
+        "rank": 1,
+        "confidence": 0.83
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "035",
+      "chosen_esco": {
+        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
+        "label": "monitoring and evaluation officer",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "036",
+      "chosen_esco": {
+        "esco_id": "c0489e22-6a1b-4e52-974a-eb71bbb42134",
+        "label": "public relations officer",
+        "rank": 1,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "037",
+      "chosen_esco": {
+        "esco_id": "3765a20d-5160-4e8f-82f1-ad7872b9db24",
+        "label": "information manager",
+        "rank": 1,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "038",
+      "chosen_esco": {
+        "esco_id": "a74f6c51-37e5-423e-aa5b-044e98663027",
+        "label": "web content manager",
+        "rank": 1,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "039",
+      "chosen_esco": {
+        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
+        "label": "monitoring and evaluation officer",
+        "rank": 1,
+        "confidence": 0.82
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "040",
+      "chosen_esco": {
+        "esco_id": "39e9fc8f-02bd-4577-b603-2dc96204ce74",
+        "label": "community development officer",
+        "rank": 1,
+        "confidence": 0.85
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "041",
+      "chosen_esco": {
+        "esco_id": "fb7e2f4f-1545-42f1-972e-94082e49c6dc",
+        "label": "building construction worker",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "042",
+      "chosen_esco": {
+        "esco_id": "72381086-cb6e-455e-a40b-ccb26550aab6",
+        "label": "power production plant operator",
+        "rank": 3,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "043",
+      "chosen_esco": {
+        "esco_id": "39e9fc8f-02bd-4577-b603-2dc96204ce74",
+        "label": "community development officer",
+        "rank": 1,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "044",
+      "chosen_esco": {
+        "esco_id": "1e55f5e3-2f02-434b-997b-9a9f3eb745e8",
+        "label": "power lines supervisor",
+        "rank": 1,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "045",
+      "chosen_esco": {
+        "esco_id": "bea99fea-0383-4c63-b944-70d4799de2c5",
+        "label": "project manager",
+        "rank": 2,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "046",
+      "chosen_esco": {
+        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
+        "label": "civil engineer",
+        "rank": 1,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "047",
+      "chosen_esco": {
+        "esco_id": "86ca306c-ab99-420a-9e2a-aa73c5c4de22",
+        "label": "electrical engineer",
+        "rank": 2,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "048",
+      "chosen_esco": {
+        "esco_id": "579254cf-6d69-4889-9000-9c79dc568644",
+        "label": "mechanical engineer",
+        "rank": 3,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "049",
+      "chosen_esco": {
+        "esco_id": "0cca32c2-9308-4927-adb2-14771ab787f0",
+        "label": "quantity surveyor",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "050",
+      "chosen_esco": {
+        "esco_id": "0561328b-875b-4ae2-9ba1-9af9049aef01",
+        "label": "procurement category specialist",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "051",
+      "chosen_esco": {
+        "esco_id": "5e5b1b61-1351-4d3b-a293-deb3661715dd",
+        "label": "financial controller",
+        "rank": 1,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "052",
+      "chosen_esco": {
+        "esco_id": "bfe142b9-a049-4d41-89c4-fd2f34ac56b6",
+        "label": "accounting assistant",
+        "rank": 1,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "053",
+      "chosen_esco": {
+        "esco_id": "c8b296be-54ae-48cf-be21-031fa8457937",
+        "label": "supply chain assistant",
+        "rank": 1,
+        "confidence": 0.88
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "054",
+      "chosen_esco": {
+        "esco_id": "b89ba3a8-f03a-46b8-ac54-c87d7204aad0",
+        "label": "spokesperson",
+        "rank": 1,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "055",
+      "chosen_esco": {
+        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
+        "label": "environmental protection manager",
+        "rank": 1,
+        "confidence": 0.78
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "056",
+      "chosen_esco": {
+        "esco_id": "2a914d26-42aa-46b5-acf3-097d51ba4617",
+        "label": "construction engineer",
+        "rank": 2,
+        "confidence": 0.78
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "057",
+      "chosen_esco": {
+        "esco_id": "0dd7e6cd-2e5a-4fae-9ce0-6a3622d4019f",
+        "label": "construction general supervisor",
+        "rank": 5,
+        "confidence": 0.85
       },
       "needs_manual_review": false
     },
     {
       "record_id": "058",
       "chosen_esco": {
-        "esco_id": "7052fd94-f563-46a9-8e2d-cba6c20f3e71",
-        "label": "overhead line worker",
+        "esco_id": "1bdb7d70-1769-4338-aa90-d25a90fe8a6d",
+        "label": "geological engineer",
         "rank": 1,
         "confidence": 0.9
       },
@@ -588,160 +593,160 @@
     {
       "record_id": "059",
       "chosen_esco": {
-        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
-        "label": "civil engineer",
-        "rank": 2,
-        "confidence": 0.88
+        "esco_id": "76abbb82-c103-4d7a-a4c0-14dba4d6199a",
+        "label": "commissioning engineer",
+        "rank": 1,
+        "confidence": 0.9
       },
       "needs_manual_review": false
     },
     {
       "record_id": "060",
       "chosen_esco": {
-        "esco_id": "7a0afb5e-f118-449a-82bd-d8b9230fd49f",
-        "label": "tunnel boring machine operator",
-        "rank": 1,
-        "confidence": 0.86
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "061",
-      "chosen_esco": {
-        "esco_id": "eedbf8b1-9432-4f42-ab7f-db5cd3eb2a05",
-        "label": "excavator operator",
-        "rank": 5,
-        "confidence": 0.88
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "062",
-      "chosen_esco": {
-        "esco_id": "20db07fc-cc02-46aa-a4fc-b3c73ba8fa8f",
-        "label": "concrete finisher supervisor",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "063",
-      "chosen_esco": {
-        "esco_id": "7ef064b1-aab8-4818-a468-8f17acbfd995",
-        "label": "hydropower technician",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "064",
-      "chosen_esco": {
-        "esco_id": "7ef064b1-aab8-4818-a468-8f17acbfd995",
-        "label": "hydropower technician",
-        "rank": 2,
-        "confidence": 0.85
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "065",
-      "chosen_esco": {
-        "esco_id": "76abbb82-c103-4d7a-a4c0-14dba4d6199a",
-        "label": "commissioning engineer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "066",
-      "chosen_esco": {
-        "esco_id": "f1b89616-5dfe-40d4-8b02-58a6982b1a01",
-        "label": "substation engineer",
-        "rank": 1,
-        "confidence": 0.9
-      },
-      "needs_manual_review": false
-    },
-    {
-      "record_id": "067",
-      "chosen_esco": {
-        "esco_id": "76abbb82-c103-4d7a-a4c0-14dba4d6199a",
-        "label": "commissioning engineer",
+        "esco_id": "1e55f5e3-2f02-434b-997b-9a9f3eb745e8",
+        "label": "power lines supervisor",
         "rank": 1,
         "confidence": 0.82
       },
       "needs_manual_review": false
     },
     {
+      "record_id": "061",
+      "chosen_esco": {
+        "esco_id": "bea99fea-0383-4c63-b944-70d4799de2c5",
+        "label": "project manager",
+        "rank": 1,
+        "confidence": 0.87
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "062",
+      "chosen_esco": {
+        "esco_id": "2a914d26-42aa-46b5-acf3-097d51ba4617",
+        "label": "construction engineer",
+        "rank": 1,
+        "confidence": 0.8
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "063",
+      "chosen_esco": {
+        "esco_id": "a005f8a2-2d8a-433e-8d89-13575f822fd4",
+        "label": "energy manager",
+        "rank": 2,
+        "confidence": 0.7
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "064",
+      "chosen_esco": {
+        "esco_id": "cb446db8-e8b3-418c-a21c-2d10faea42a5",
+        "label": "power plant manager",
+        "rank": 3,
+        "confidence": 0.75
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "065",
+      "chosen_esco": {
+        "esco_id": "fcf9024e-277c-43c7-8ec8-8903e5c9c576",
+        "label": "water engineer",
+        "rank": 3,
+        "confidence": 0.85
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "066",
+      "chosen_esco": {
+        "esco_id": "5e5b1b61-1351-4d3b-a293-deb3661715dd",
+        "label": "financial controller",
+        "rank": 1,
+        "confidence": 0.86
+      },
+      "needs_manual_review": false
+    },
+    {
+      "record_id": "067",
+      "chosen_esco": {
+        "esco_id": "0561328b-875b-4ae2-9ba1-9af9049aef01",
+        "label": "procurement category specialist",
+        "rank": 1,
+        "confidence": 0.9
+      },
+      "needs_manual_review": false
+    },
+    {
       "record_id": "068",
       "chosen_esco": {
-        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
-        "label": "environmental protection manager",
+        "esco_id": "8213b4bc-60ce-4ffc-9e00-9758fb2003c6",
+        "label": "monitoring and evaluation officer",
         "rank": 1,
-        "confidence": 0.88
+        "confidence": 0.9
       },
       "needs_manual_review": false
     },
     {
       "record_id": "069",
       "chosen_esco": {
-        "esco_id": "d6ef013f-57e9-4100-bbe5-3e4930664dee",
-        "label": "social services policy officer",
-        "rank": 5,
-        "confidence": 0.65
+        "esco_id": "a1cf1406-3632-494c-bff3-0bd5d5327d8f",
+        "label": "survey enumerator",
+        "rank": 1,
+        "confidence": 0.78
       },
       "needs_manual_review": false
     },
     {
       "record_id": "070",
       "chosen_esco": {
-        "esco_id": "35fbb8cd-c044-49a1-850c-010481c99b4a",
-        "label": "financial markets back office administrator",
+        "esco_id": "f33a70bd-c5b6-495d-8e0c-5e2c6e56d93e",
+        "label": "power plant control room operator",
         "rank": 1,
-        "confidence": 0.7
+        "confidence": 0.9
       },
       "needs_manual_review": false
     },
     {
       "record_id": "071",
       "chosen_esco": {
-        "esco_id": "39e9fc8f-02bd-4577-b603-2dc96204ce74",
-        "label": "community development officer",
+        "esco_id": "4b214899-ed00-4156-b269-a23df0fb1093",
+        "label": "environmental protection manager",
         "rank": 1,
-        "confidence": 0.86
+        "confidence": 0.78
       },
       "needs_manual_review": false
     },
     {
       "record_id": "072",
       "chosen_esco": {
-        "esco_id": "2a914d26-42aa-46b5-acf3-097d51ba4617",
-        "label": "construction engineer",
-        "rank": 3,
-        "confidence": 0.78
+        "esco_id": "a092cb70-f3e3-4224-98a3-b97c0114de77",
+        "label": "environmental health inspector",
+        "rank": 1,
+        "confidence": 0.82
       },
       "needs_manual_review": false
     },
     {
       "record_id": "073",
       "chosen_esco": {
-        "esco_id": "bea99fea-0383-4c63-b944-70d4799de2c5",
-        "label": "project manager",
-        "rank": 2,
-        "confidence": 0.88
+        "esco_id": "e12f08fb-4748-4388-9489-b647df60332a",
+        "label": "hydropower engineer",
+        "rank": 1,
+        "confidence": 0.82
       },
       "needs_manual_review": false
     },
     {
       "record_id": "074",
       "chosen_esco": {
-        "esco_id": "d7d986e1-7333-431b-9719-0c5c6939e360",
-        "label": "civil engineer",
-        "rank": 2,
-        "confidence": 0.86
+        "esco_id": "bea99fea-0383-4c63-b944-70d4799de2c5",
+        "label": "project manager",
+        "rank": 1,
+        "confidence": 0.88
       },
       "needs_manual_review": false
     }

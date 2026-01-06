@@ -1,20 +1,4 @@
-﻿Mapping project name,ESCO-O*NET Crosswalk,,,,,
-Mapping project author,ESCO Secretariat in collaboration with the U.S. Department of Labor/Employment and Training Administration,,,,,
-Mapping project version,1,,,,,
-Mapping project version date,Sep-22,,,,,
-Classification 1 Name,O*NET,,,,,
-Classification 1 Concept type,Occupation,,,,,
-Classification 1 Version,O*NET-SOC 2019,,,,,
-Classification 1 Language,English,,,,,
-Classification 1 Landing page,https://www.onetonline.org/,,,,,
-Classification 2 Name,ESCO,,,,,
-Classification 2 Concept type,Occupation,,,,,
-Classification 2 Version,v1.1.0,,,,,
-Classification 2 Language,English,,,,,
-Classification 2 Landing page,https://esco.ec.europa.eu/en,,,,,
-,,,,,,
-,,,,,,
-O*NET Id,O*NET Title,O*NET Description,ESCO or ISCO URI,ESCO or ISCO Title,ESCO or ISCO Description,Type of Match
+﻿O*NET Id,O*NET Title,O*NET Description,ESCO or ISCO URI,ESCO or ISCO Title,ESCO or ISCO Description,Type of Match
 11-1011.00,Chief Executives,"Determine and formulate policies and provide overall direction of companies or private and public sector organizations within guidelines set up by a board of directors or similar governing body. Plan, direct, or coordinate operational activities at the highest level of management with the help of subordinate executives and staff managers.",http://data.europa.eu/esco/occupation/5c5b153e-4bf8-4f3d-973d-12fabf306d12,secretary general,"Secretaries general head international governmental or nongovernmental organisations. They supervise staff, direct policy and strategy development, and function as main representative of the organisation.",closeMatch
 11-1011.00,Chief Executives,"Determine and formulate policies and provide overall direction of companies or private and public sector organizations within guidelines set up by a board of directors or similar governing body. Plan, direct, or coordinate operational activities at the highest level of management with the help of subordinate executives and staff managers.",http://data.europa.eu/esco/occupation/6c3fd65e-2d24-47d8-bc22-9e93512bdcc2,chief executive officer,"Chief executive officers hold the highest ranking in a pyramidal corporate structure. They are able to hold a complete idea of the functioning of the business, its departments, risks, and stakeholders. They analyse different kinds of information and create links among them for decision-making purposes. They serve as aÂ  communication link with the board of directors for reporting and implementation of the overall strategy.",exactMatch
 11-1011.00,Chief Executives,"Determine and formulate policies and provide overall direction of companies or private and public sector organizations within guidelines set up by a board of directors or similar governing body. Plan, direct, or coordinate operational activities at the highest level of management with the help of subordinate executives and staff managers.",http://data.europa.eu/esco/occupation/c64a6e4e-5b38-4f93-b26d-aded817aeaf3,chief operating officer,"Chief operating officers are the right hand and second in command of a company's chief executive officer. They ensure that the daily operations of the company run smoothly. Chief operating officers also develop company policies, rules and goals.",broadMatch

@@ -172,3 +172,46 @@ uv run python -m src.matching.cli_select_esco P075941 \
 **Outputs:**
 - `data/silver/choose_esco_json/{project_id}_000-074_esco_selection.json` - Selection results per chunk
 - `data/silver/choose_esco_csv/{project_id}_esco_selections.csv` - Combined CSV with selections and PAD context
+
+## Skills Refinement
+
+The skills refinement utility is in `src/skills/skills_refiner.py`. It:
+- Loads unique ESCO occupations with NACE codes
+- Merges with ESCO skills relations (essential skills only)
+- Creates JSON chunks with PAD project context
+- Uses OpenAI API to evaluate skill relevance and identify top skills
+- Returns boolean flags for relevance and top-five importance
+
+**Usage from Python:**
+```python
+from pathlib import Path
+from src.skills.skills_refiner import SkillsRefiner
+
+refiner = SkillsRefiner(
+    unique_esco_nace_file=Path("data/silver/unique_esco_nace_csv/P075941_unique_matched_with_nace.csv"),
+    esco_skills_file=Path("data/bronze/esco/occupationSkillRelations_en.csv"),
+    pad_summary_file=Path("data/silver/pad_summaries/P075941_summary.txt"),
+    project_id="P075941",
+    openai_api_key="your-api-key",
+    chunk_size=3
+)
+
+output_file = refiner.run(
+    output_dir=Path("data/silver/esco_nace_w_skills_csv")
+)
+```
+
+**Usage from CLI:**
+```bash
+# Refine skills for a specific project
+uv run python -m src.skills.cli_refine_skills --project-id P075941
+
+# Overwrite existing refinement files
+uv run python -m src.skills.cli_refine_skills --project-id P075941 --overwrite
+
+# Use different chunk size (default: 3 occupations per API call)
+uv run python -m src.skills.cli_refine_skills --project-id P075941 --chunk-size 5
+```
+
+**Outputs:**
+- `data/silver/esco_nace_w_skills_csv/{project_id}_esco_nace_with_skills.csv` - ESCO occupations with refined skills evaluation

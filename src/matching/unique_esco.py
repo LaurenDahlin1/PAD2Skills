@@ -1,9 +1,30 @@
 """Create unique ESCO matches from selection results."""
 
 import ast
+import json
+import re
+import string
 from pathlib import Path
 
 import pandas as pd
+
+
+def normalize_occupation(occupation: str) -> str:
+    """Normalize occupation by converting to lowercase and removing punctuation.
+    
+    Args:
+        occupation: The occupation string to normalize
+        
+    Returns:
+        Normalized occupation string
+    """
+    if pd.isna(occupation):
+        return ""
+    # Convert to lowercase and strip punctuation
+    normalized = occupation.lower().translate(str.maketrans("", "", string.punctuation))
+    # Normalize whitespace
+    normalized = " ".join(normalized.split())
+    return normalized
 
 
 def format_skills(skills_str: str) -> str:
@@ -31,6 +52,7 @@ def create_unique_esco_matches(
     project_id: str,
     selections_csv_path: Path,
     esco_occupations_path: Path,
+    sections_json_path: Path,
     output_path: Path,
     overwrite: bool = False,
 ) -> pd.DataFrame:
@@ -38,16 +60,18 @@ def create_unique_esco_matches(
 
     This function:
     1. Loads the ESCO selections CSV
-    2. Filters out records that need manual review
-    3. Formats quotes with section names
-    4. Groups by ESCO ID and aggregates PAD data
-    5. Merges with ESCO occupations data
-    6. Saves the result as a CSV
+    2. Maps section IDs to section names
+    3. Filters out records that need manual review
+    4. Formats quotes with section names
+    5. Groups by ESCO ID and aggregates PAD data
+    6. Merges with ESCO occupations data
+    7. Saves the result as a CSV
 
     Args:
         project_id: Project identifier (e.g., P075941)
         selections_csv_path: Path to the _esco_selections.csv file
         esco_occupations_path: Path to the ESCO occupations CSV
+        sections_json_path: Path to document sections JSON
         output_path: Path where the unique matches CSV will be saved
         overwrite: If False, skip processing if output file exists
 
@@ -64,6 +88,16 @@ def create_unique_esco_matches(
 
     print(f"✓ Loaded selections data: {len(df_selections)} rows")
     print(f"  Columns: {list(df_selections.columns)}")
+
+    # Load and map section names
+    section_mapping = _load_section_names(sections_json_path)
+    if section_mapping:
+        # Convert pad_section_id to int for mapping (section_id in JSON is int)
+        df_selections["pad_section_name"] = df_selections["pad_section_id"].astype(int).map(section_mapping)
+        print(f"✓ Mapped section names: {df_selections['pad_section_name'].notna().sum()} records")
+    else:
+        df_selections["pad_section_name"] = ""
+        print("⚠ Warning: No section names loaded, pad_section_name will be empty")
 
     # Drop records where needs_manual_review = True
     df_filtered = df_selections[df_selections["needs_manual_review"] != True].copy()  # noqa: E712
@@ -92,7 +126,11 @@ def create_unique_esco_matches(
                 "pad_occupation": lambda x: ", ".join(
                     [
                         f'"{occupation}"'
-                        for occupation in x.dropna().astype(str).unique()
+                        for occupation in sorted(set(
+                            normalize_occupation(occ) 
+                            for occ in x.dropna().astype(str)
+                        ))
+                        if occupation  # Filter out empty strings
                     ]
                 ),
                 "pad_activity": lambda x: ", ".join(
@@ -175,3 +213,30 @@ def create_unique_esco_matches(
     print("  - Collapsed occupations, activities, skills, and quotes")
 
     return df_unique
+
+
+def _load_section_names(sections_json_path: Path) -> dict[int, str]:
+    """Load and clean section names from JSON.
+    
+    Args:
+        sections_json_path: Path to document sections JSON file
+        
+    Returns:
+        Dictionary mapping section_id (int) to cleaned section name
+    """
+    if not sections_json_path.exists():
+        print(f"Warning: Sections JSON not found: {sections_json_path}")
+        return {}
+
+    with open(sections_json_path, "r", encoding="utf-8") as f:
+        sections_data = json.load(f)
+
+    section_mapping = {}
+    for section in sections_data.get("sections", []):
+        header = section.get("header_text", "")
+        # Remove pound signs and normalize whitespace
+        cleaned = re.sub(r"#", "", header)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip()
+        section_mapping[section["section_id"]] = cleaned
+
+    return section_mapping

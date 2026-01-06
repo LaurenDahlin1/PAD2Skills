@@ -1,6 +1,7 @@
 """Extract occupations and skills from PAD document chunks using OpenAI API."""
 
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -20,6 +21,11 @@ class OccupationsExtractor:
         """Initialize the occupations extractor with OpenAI client."""
         # Suppress verbose HTTP logging from OpenAI client
         os.environ["OPENAI_LOG"] = "error"
+        
+        # Suppress httpx INFO logs
+        logging.getLogger("httpx").setLevel(logging.WARNING)
+        logging.getLogger("openai").setLevel(logging.WARNING)
+        
         self.client = OpenAI()
 
     def extract_occupations(
@@ -165,6 +171,17 @@ def extract_all_occupations(
 
     # Track results
     results = {"generated": [], "skipped": [], "failed": []}
+
+    # Clean up existing output files if overwrite is True
+    if overwrite:
+        # Get unique project IDs from chunk files
+        project_ids = {f.stem.split("_", 1)[0] for f in chunk_files}
+        for proj_id in project_ids:
+            existing_outputs = list(output_dir.glob(f"{proj_id}_*_occupations.json"))
+            if existing_outputs:
+                for old_file in existing_outputs:
+                    old_file.unlink()
+                print(f"Cleaned up {len(existing_outputs)} existing occupation files for {proj_id}")
 
     # Track progress
     total_chunks = len(chunk_files)

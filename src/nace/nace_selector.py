@@ -210,7 +210,7 @@ class NACESelector:
         """Select the best NACE group for each ESCO ID.
 
         Returns:
-            DataFrame with esco_id, best_group_code, and similarity_score
+            DataFrame with esco_id, group_code, and similarity_score
         """
         print("\nSelecting best NACE group for each ESCO ID...")
 
@@ -222,14 +222,14 @@ class NACESelector:
                 group_code, similarity_score = top_groups[0]
                 results.append({
                     "esco_id": esco_id,
-                    "best_group_code": group_code,
+                    "group_code": group_code,
                     "similarity_score": similarity_score,
                 })
             else:
                 # No result (no embeddings or no candidate groups)
                 results.append({
                     "esco_id": esco_id,
-                    "best_group_code": None,
+                    "group_code": None,
                     "similarity_score": None,
                 })
 
@@ -237,10 +237,10 @@ class NACESelector:
 
         print(f"✓ Selected best NACE group for {len(best_groups_df)} ESCO IDs")
         print(
-            f"  ESCO IDs with a best group: {best_groups_df['best_group_code'].notna().sum()} "
-            f"({best_groups_df['best_group_code'].notna().mean():.1%})"
+            f"  ESCO IDs with a best group: {best_groups_df['group_code'].notna().sum()} "
+            f"({best_groups_df['group_code'].notna().mean():.1%})"
         )
-        print(f"  ESCO IDs with no group: {best_groups_df['best_group_code'].isna().sum()}")
+        print(f"  ESCO IDs with no group: {best_groups_df['group_code'].isna().sum()}")
         if best_groups_df["similarity_score"].notna().any():
             print(f"  Mean similarity score: {best_groups_df['similarity_score'].mean():.4f}")
             print(f"  Median similarity score: {best_groups_df['similarity_score'].median():.4f}")
@@ -251,7 +251,7 @@ class NACESelector:
         """Merge best groups back with ESCO data and add NACE metadata.
 
         Args:
-            best_groups_df: DataFrame with esco_id, best_group_code, similarity_score
+            best_groups_df: DataFrame with esco_id, group_code, similarity_score
 
         Returns:
             DataFrame with complete results including NACE metadata
@@ -260,7 +260,7 @@ class NACESelector:
 
         # Merge with unique ESCO data
         result_df = self.unique_esco_df.merge(
-            best_groups_df[["esco_id", "best_group_code", "similarity_score"]],
+            best_groups_df[["esco_id", "group_code", "similarity_score"]],
             on="esco_id",
             how="left",
         )
@@ -277,15 +277,14 @@ class NACESelector:
                     "group_label_en",
                 ]
             ].drop_duplicates("group_code"),
-            left_on="best_group_code",
-            right_on="group_code",
+            on="group_code",
             how="left",
         )
 
         print("✓ Merged results")
         print(
-            f"  Rows with NACE group: {result_df['best_group_code'].notna().sum()} "
-            f"({result_df['best_group_code'].notna().mean():.1%})"
+            f"  Rows with NACE group: {result_df['group_code'].notna().sum()} "
+            f"({result_df['group_code'].notna().mean():.1%})"
         )
 
         return result_df
@@ -335,7 +334,7 @@ class NACESelector:
             "esco_id",
             "esco_label",
             "esco_description",
-            "best_group_code",
+            "group_code",
             "group_label_en",
             "division_code",
             "division_label_en",
@@ -343,6 +342,8 @@ class NACESelector:
             "section_label_en",
             "pad_occupations",
             "pad_activities",
+            "pad_skills",
+            "pad_quotes",
         ]
 
         # Keep only columns that exist
@@ -353,9 +354,9 @@ class NACESelector:
         print(f"\n✓ Saved results to: {output_file}")
         print(f"  Total rows: {len(result_df)}")
         print(f"  Unique ESCO IDs: {result_df['esco_id'].nunique()}")
-        print(f"  ESCO IDs with NACE group: {result_df['best_group_code'].notna().sum()}")
+        print(f"  ESCO IDs with NACE group: {result_df['group_code'].notna().sum()}")
         print(f"  Unique NACE sections: {result_df['section_code'].nunique()}")
         print(f"  Unique NACE divisions: {result_df['division_code'].nunique()}")
-        print(f"  Unique NACE groups: {result_df['best_group_code'].nunique()}")
+        print(f"  Unique NACE groups: {result_df['group_code'].nunique()}")
 
         return output_file

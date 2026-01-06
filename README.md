@@ -23,6 +23,9 @@ PDF → Markdown → LLM Extraction → Structured Output → Visualization
 - **PAD Summary Generation**: Generates concise summaries of PAD documents using abbreviations and first sections
 - **Occupations and Skills Extraction**: Extracts occupations and skills from PAD chunks using OpenAI API
 - **ESCO Occupation Matching**: Matches PAD occupations to ESCO taxonomy using semantic similarity
+- **ESCO Selection**: Uses AI to select best ESCO match from candidates
+- **NACE Industry Codes**: Enriches ESCO occupations with NACE industry classifications
+- **Skills Refinement**: Evaluates ESCO skills relevance and identifies top skills for each occupation
 
 ### 🚧 In Progress
 - Structured output generation and aggregation (CSV)
@@ -583,6 +586,58 @@ data/silver/unique_esco_nace_csv/{project_id}_unique_matched_with_nace.csv
 
 **Note:** Step 8a (ESCO-NACE mapper) should be run once before processing any projects. Step 8b requires that unique ESCO matches (Step 7b) have been created for the target project.
 
+### Step 9: Refine ESCO Skills
+
+The ninth step refines ESCO skills by evaluating their relevance to the specific PAD project context. This step loads ESCO occupations with NACE codes, merges with skills from the ESCO skills relation table, and uses OpenAI API to evaluate which skills are relevant and identify the top five most important skills for each occupation.
+
+#### Run skills refinement
+
+**Refine skills for a specific project:**
+```bash
+uv run python -m src.skills.cli_refine_skills --project-id P075941
+```
+
+**Refine with custom options:**
+```bash
+# Overwrite existing refinement files
+uv run python -m src.skills.cli_refine_skills --project-id P075941 --overwrite
+
+# Use different chunk size (default: 3 occupations per API call)
+uv run python -m src.skills.cli_refine_skills --project-id P075941 --chunk-size 5
+
+# Use custom directories
+uv run python -m src.skills.cli_refine_skills --project-id P075941 \
+    --unique-esco-nace data/silver/unique_esco_nace_csv/P075941_unique_matched_with_nace.csv \
+    --esco-skills data/bronze/esco/occupationSkillRelations_en.csv \
+    --pad-summary data/silver/pad_summaries/P075941_summary.txt \
+    --output-dir data/silver/esco_nace_w_skills_csv
+```
+
+**Check the output:**
+```bash
+# ESCO occupations with refined skills evaluation:
+data/silver/esco_nace_w_skills_csv/{project_id}_esco_nace_with_skills.csv
+```
+
+This utility:
+- Loads unique ESCO occupations with NACE codes from Step 8b
+- Merges with ESCO skills relations (essential skills only)
+- Creates combined text from ESCO labels, PAD occupations, activities, and skills
+- Groups occupations into chunks (default: 3) for API processing
+- Uses OpenAI API to evaluate each skill for relevance and importance
+- Returns boolean flags: `relevant` (skill is relevant to project) and `top_five` (one of the 5 most important skills)
+- Saves results as CSV with all ESCO metadata, skill details, and evaluation results
+
+**Features:**
+- **Context-aware evaluation**: Uses PAD project summary and occupation details
+- **Batch processing**: Processes multiple occupations per API call for efficiency
+- **Essential skills focus**: Only evaluates essential ESCO skills (not optional)
+- **Top skills identification**: Identifies the 5 most critical skills per occupation
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-processing)
+- **Configurable chunking**: Adjust chunk size to balance API efficiency and rate limits
+
+**Note:** This step requires that ESCO occupations with NACE codes (Step 8b) and PAD summaries (Step 5) have been created for the target project. You must have an OpenAI API key configured in your `.env` file.
+
 ## Project Structure
 
 ```
@@ -610,6 +665,7 @@ PAD2Skills/
 │   │   ├── unique_esco_csv/    # Unique ESCO matches with aggregated PAD data (CSV)
 │   │   ├── esco_nace_csv/      # ESCO-NACE group mappings (CSV)
 │   │   ├── unique_esco_nace_csv/  # ESCO matches with NACE codes (CSV)
+│   │   ├── esco_nace_w_skills_csv/  # ESCO with NACE codes and refined skills (CSV)
 │   │   └── occupations_skills_json/  # Extracted occupations/skills (JSON)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
@@ -625,6 +681,7 @@ PAD2Skills/
 │   ├── extraction/     # Document section and abbreviation extraction
 │   ├── matching/       # ESCO occupation matching
 │   ├── nace/           # NACE industry code processing
+│   ├── skills/         # ESCO skills refinement and evaluation
 │   ├── utils/          # Utility functions
 │   └── visualization/  # Visualization tools (planned)
 └── tests/               # Test suite

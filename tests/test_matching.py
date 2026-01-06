@@ -192,13 +192,14 @@ class TestEscoSelector:
         import json
         import tempfile
         from pathlib import Path
-        from unittest.mock import Mock
+
+        from src.matching.unique_esco import _load_section_names
 
         # Create a temporary JSON file
         sections_data = {
             "sections": [
-                {"section_id": "sec_001", "header_text": "## Project Description  "},
-                {"section_id": "sec_002", "header_text": "###  Implementation   Plan"},
+                {"section_id": 0, "header_text": "## Project Description  "},
+                {"section_id": 1, "header_text": "###  Implementation   Plan"},
             ]
         }
 
@@ -207,15 +208,12 @@ class TestEscoSelector:
             temp_path = Path(f.name)
 
         try:
-            # Pass a mock client to avoid needing OpenAI API key
-            mock_client = Mock()
-            selector = EscoSelector(client=mock_client)
-            section_mapping = selector._load_section_names(temp_path)
+            section_mapping = _load_section_names(temp_path)
 
             assert len(section_mapping) == 2
             # Check that pound signs and extra whitespace are removed
-            assert section_mapping["sec_001"] == "Project Description"
-            assert section_mapping["sec_002"] == "Implementation Plan"
+            assert section_mapping[0] == "Project Description"
+            assert section_mapping[1] == "Implementation Plan"
 
         finally:
             temp_path.unlink()
@@ -223,12 +221,10 @@ class TestEscoSelector:
     def test_load_section_names_missing_file(self):
         """Test loading section names when file doesn't exist."""
         from pathlib import Path
-        from unittest.mock import Mock
 
-        # Pass a mock client to avoid needing OpenAI API key
-        mock_client = Mock()
-        selector = EscoSelector(client=mock_client)
-        section_mapping = selector._load_section_names(Path("/nonexistent/file.json"))
+        from src.matching.unique_esco import _load_section_names
+
+        section_mapping = _load_section_names(Path("/nonexistent/file.json"))
 
         # Should return empty dict without raising error
         assert section_mapping == {}

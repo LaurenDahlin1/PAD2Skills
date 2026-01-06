@@ -349,6 +349,14 @@ def create_chunks(
             continue
 
         try:
+            # Clean up any existing chunk files for this project if overwrite is True
+            if overwrite:
+                existing_chunks = list(output_dir.glob(f"{project_id}_*"))
+                if existing_chunks:
+                    for old_chunk in existing_chunks:
+                        old_chunk.unlink()
+                    print(f"Cleaned up {len(existing_chunks)} existing chunk files for {project_id}")
+
             # Load sections JSON
             with open(sections_file, "r", encoding="utf-8") as f:
                 sections_data = json.load(f)
