@@ -44,7 +44,7 @@ from pathlib import Path
 from src.matching.esco_prepare import prepare_esco_data
 
 esco_dir = Path("data/bronze/esco")
-output_csv = Path("data/silver/esco_occupations_prepared.csv")
+output_csv = Path("data/silver/clean_esco/esco_occupations_prepared.csv")
 embeddings_file = Path("data/silver/embeddings/esco_embeddings.npy")
 
 df, embeddings = prepare_esco_data(
@@ -69,7 +69,7 @@ uv run python -m src.matching.cli_prepare_esco --model "sentence-transformers/al
 ```
 
 **Outputs:**
-- `data/silver/esco_occupations_prepared.csv` - Prepared ESCO occupations with combined text
+- `data/silver/clean_esco/esco_occupations_prepared.csv` - Prepared ESCO occupations with combined text
 - `data/silver/embeddings/esco_embeddings.npy` - Normalized embeddings for similarity search
 
 ### PAD to ESCO Matching
@@ -87,7 +87,7 @@ from pathlib import Path
 from src.matching.pad_matcher import match_pad_to_esco
 
 pad_occupations_dir = Path("data/silver/occupations_skills_json")
-esco_csv = Path("data/silver/esco_occupations_prepared.csv")
+esco_csv = Path("data/silver/clean_esco/esco_occupations_prepared.csv")
 esco_embeddings = Path("data/silver/embeddings/esco_embeddings.npy")
 output_dir = Path("data/silver")
 

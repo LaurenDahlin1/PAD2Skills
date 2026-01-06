@@ -41,7 +41,7 @@ def main():
     project_root = Path(__file__).parent.parent.parent
 
     pad_occupations_dir = project_root / "data" / "silver" / "occupations_skills_json"
-    esco_csv = project_root / "data" / "silver" / "esco_occupations_prepared.csv"
+    esco_csv = project_root / "data" / "silver" / "clean_esco" / "esco_occupations_prepared.csv"
     esco_embeddings = project_root / "data" / "silver" / "embeddings" / "esco_embeddings.npy"
     output_dir = project_root / "data" / "silver"
 

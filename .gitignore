@@ -49,6 +49,7 @@ data/silver/pads_md/*.md
 data/silver/pads_md_chunks/
 data/silver/markdown_testing/
 data/silver/document_sections/*.json
+data/silver/pad_summaries/
 data/silver/occupations_skills_json/
 data/silver/occupation_skills_csv/
 data/silver/esco_matching_csv/
@@ -58,6 +59,7 @@ data/silver/choose_esco_csv/
 data/silver/abbreviations_md/*.md
 data/silver/unique_esco_csv/
 data/silver/unique_esco_nace_csv/
+data/silver/esco_nace_w_skills_csv/
 data/silver/embeddings/
 data/silver/selected_projects_data/
 
@@ -67,5 +69,5 @@ data/gold/*.json
 # Keep reference data files
 !data/bronze/esco/
 !data/bronze/nace/
-!data/silver/esco_occupations_prepared.csv
+!data/silver/clean_esco/esco_occupations_prepared.csv
 !data/silver/esco_nace_csv/

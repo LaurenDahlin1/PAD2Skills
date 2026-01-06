@@ -31,7 +31,7 @@ def main():
     project_root = Path(__file__).parent.parent.parent
 
     esco_dir = project_root / "data" / "bronze" / "esco"
-    output_csv = project_root / "data" / "silver" / "esco_occupations_prepared.csv"
+    output_csv = project_root / "data" / "silver" / "clean_esco" / "esco_occupations_prepared.csv"
     embeddings_file = project_root / "data" / "silver" / "embeddings" / "esco_embeddings.npy"
 
     # Prepare ESCO data

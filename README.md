@@ -656,7 +656,8 @@ PAD2Skills/
 │   │   ├── abbreviations_md/   # Extracted abbreviations (markdown tables)
 │   │   ├── pads_md_chunks/     # Section-based markdown chunks
 │   │   ├── pad_summaries/      # Generated PAD summaries (text)
-│   │   ├── esco_occupations_prepared.csv  # Prepared ESCO data
+│   │   ├── clean_esco/
+│   │   │   └── esco_occupations_prepared.csv  # Prepared ESCO data
 │   │   ├── embeddings/         # Cached ESCO embeddings
 │   │   ├── esco_matching_csv/  # PAD-to-ESCO matching results (CSV)
 │   │   ├── esco_matching_json/ # PAD-to-ESCO matching results (JSON chunks)
