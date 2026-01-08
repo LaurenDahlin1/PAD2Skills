@@ -729,7 +729,9 @@ data/silver/unique_esco_nace_onet_csv/{project_id}_esco_nace_onet.csv
 - **Method transparency**: Shows whether job zone came from O*NET or LLM estimate
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-merge)
 
-**Note:** Step 12a (crosswalk creation) should be run once before processing any projects. Step 12b requires that unique ESCO-NACE files (Step 9b) have been created for the target projects. You must have an OpenAI API key configured in your `.env` file for Step 12a.
+### Step 13: Create final data files
+- Final data file creation is currently located in notebooks 10 and 11.
+
 
 ## Project Structure
 
