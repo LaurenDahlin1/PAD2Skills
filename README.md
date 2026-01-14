@@ -8,29 +8,10 @@ Extract occupations and skills data from World Bank Project Appraisal Documents 
 
 This project processes World Bank PAD PDFs to extract structured information about occupations and skills mentioned in development projects. The pipeline converts PDFs to markdown, uses LLM-based extraction to identify relevant data, and outputs structured formats (JSON/CSV) for analysis and visualization.
 
-**Pipeline:**
+**Pipeline Overview:**
 ```
-PDF → Markdown → LLM Extraction → Structured Output → Visualization
+PDF → Markdown → LLM Extraction → Structured Output 
 ```
-
-## Project Status
-
-### ✅ Completed
-- **Single-Project Pipeline Orchestrator**: Run all pipeline steps end-to-end for a single project with timing and status tracking
-- **PDF to Markdown Conversion**: Converts PAD PDFs to markdown using [docling](https://github.com/DS4SD/docling) with TableFormer for accurate table extraction
-- **Document Section Extraction**: Identifies and extracts major document sections from PADs using OpenAI API
-- **Abbreviation Extraction**: Extracts abbreviations and acronyms tables from PAD documents
-- **Document Chunking**: Splits PAD documents into section-based chunks for easier processing
-- **PAD Summary Generation**: Generates concise summaries of PAD documents using abbreviations and first sections
-- **Occupations and Skills Extraction**: Extracts occupations and skills from PAD chunks using OpenAI API
-- **ESCO Occupation Matching**: Matches PAD occupations to ESCO taxonomy using semantic similarity
-- **ESCO Selection**: Uses AI to select best ESCO match from candidates
-- **NACE Industry Codes**: Enriches ESCO occupations with NACE industry classifications
-- **Skills Refinement**: Evaluates ESCO skills relevance and identifies top skills for each occupation
-
-### 🚧 In Progress
-- Structured output generation and aggregation (CSV)
-- Visualization and analysis tools
 
 ## Quick Start
 
@@ -68,6 +49,16 @@ For more installation options, see the [uv documentation](https://docs.astral.sh
    # Create virtual environment and install dependencies
    uv sync
    ```
+
+3. **Configure OpenAI:**
+   - **Create an OpenAI account** at [platform.openai.com](https://platform.openai.com/)
+   - **Upload prompts** from the `prompts/` directory to your OpenAI account for consistent results
+   - **Set model to gpt-4o-mini** for similar results as this project (or use your preferred model)
+   - **Set up environment variable** with your OpenAI API key:
+     ```bash
+     export OPENAI_API_KEY='your-api-key-here'
+     ```
+     Add this to your shell profile (~/.bashrc, ~/.zshrc, or ~/.bash_profile) to persist across sessions.
 
 ## Usage
 
@@ -203,6 +194,8 @@ uv run python -m src.pdf_conversion.cli --config custom_config.yaml
 - **Error resilience**: Continues processing if individual PDFs fail
 
 </details>
+
+> **Note:** We also explored alternative PDF conversion methods including LlamaParse and a PDF→images→text extraction pipeline with LLM. Both approaches were more accurate than docling for complex document structures but significantly more expensive due to API costs.
 
 For detailed API usage and Python integration, see [docs/pdf_conversion.md](docs/pdf_conversion.md).
 
