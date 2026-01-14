@@ -404,25 +404,25 @@ def test_generate_summary_success(tmp_path):
     # Create test chunks
     chunks_dir = tmp_path / "chunks"
     chunks_dir.mkdir()
-    
+
     project_id = "P075941"
     for i in range(4):
         chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
         chunk_file.write_text(f"# Section {i}\n\nContent for section {i}.")
-    
+
     # Create abbreviations
     abbr_dir = tmp_path / "abbr"
     abbr_dir.mkdir()
     abbr_file = abbr_dir / f"{project_id}_abbr.md"
     abbr_file.write_text("| PAD | Project Appraisal Document |")
-    
+
     # Mock OpenAI response
     with patch("src.extraction.summarizer.OpenAI") as mock_client:
         mock_response = Mock()
         mock_response.output_text = "This is a test summary of the PAD document."
         mock_client_instance = mock_client.return_value
         mock_client_instance.responses.create.return_value = mock_response
-        
+
         # Test summary generation
         summarizer = PADSummarizer()
         result = summarizer.generate_summary(
@@ -431,7 +431,7 @@ def test_generate_summary_success(tmp_path):
             abbr_dir=abbr_dir,
             num_chunks=4,
         )
-        
+
         assert result == "This is a test summary of the PAD document."
         mock_client_instance.responses.create.assert_called_once()
 
@@ -441,19 +441,19 @@ def test_generate_summary_no_abbreviations(tmp_path):
     # Create test chunks
     chunks_dir = tmp_path / "chunks"
     chunks_dir.mkdir()
-    
+
     project_id = "P075941"
     for i in range(2):
         chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
         chunk_file.write_text(f"# Section {i}\n\nContent for section {i}.")
-    
+
     # Mock OpenAI response
     with patch("src.extraction.summarizer.OpenAI") as mock_client:
         mock_response = Mock()
         mock_response.output_text = "This is a test summary."
         mock_client_instance = mock_client.return_value
         mock_client_instance.responses.create.return_value = mock_response
-        
+
         # Test summary generation without abbreviations
         summarizer = PADSummarizer()
         result = summarizer.generate_summary(
@@ -462,7 +462,7 @@ def test_generate_summary_no_abbreviations(tmp_path):
             abbr_dir=None,
             num_chunks=2,
         )
-        
+
         assert result == "This is a test summary."
 
 
@@ -470,10 +470,10 @@ def test_generate_summary_missing_chunks(tmp_path):
     """Test summary generation with missing chunks."""
     chunks_dir = tmp_path / "chunks"
     chunks_dir.mkdir()
-    
+
     with patch("src.extraction.summarizer.OpenAI"):
         summarizer = PADSummarizer()
-        
+
         with pytest.raises(FileNotFoundError, match="No chunks found"):
             summarizer.generate_summary(
                 project_id="P999999",
@@ -487,23 +487,23 @@ def test_generate_all_summaries(tmp_path):
     # Create test chunks for multiple projects
     chunks_dir = tmp_path / "chunks"
     chunks_dir.mkdir()
-    
+
     projects = ["P075941", "P119893"]
     for project_id in projects:
         for i in range(2):
             chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
             chunk_file.write_text(f"# Section {i}\n\nContent.")
-    
+
     # Create output directory
     output_dir = tmp_path / "summaries"
-    
+
     # Mock OpenAI responses
     with patch("src.extraction.summarizer.OpenAI") as mock_client:
         mock_response = Mock()
         mock_response.output_text = "Test summary."
         mock_client_instance = mock_client.return_value
         mock_client_instance.responses.create.return_value = mock_response
-        
+
         # Test batch generation
         results = generate_all_summaries(
             chunks_dir=chunks_dir,
@@ -511,11 +511,11 @@ def test_generate_all_summaries(tmp_path):
             num_chunks=2,
             overwrite=False,
         )
-        
+
         assert len(results["generated"]) == 2
         assert len(results["skipped"]) == 0
         assert len(results["failed"]) == 0
-        
+
         # Verify output files were created
         for project_id in projects:
             output_file = output_dir / f"{project_id}_summary.txt"
@@ -528,18 +528,18 @@ def test_generate_all_summaries_skip_existing(tmp_path):
     # Create test chunks
     chunks_dir = tmp_path / "chunks"
     chunks_dir.mkdir()
-    
+
     project_id = "P075941"
     for i in range(2):
         chunk_file = chunks_dir / f"{project_id}_{i}_section.md"
         chunk_file.write_text(f"# Section {i}\n\nContent.")
-    
+
     # Create output directory with existing summary
     output_dir = tmp_path / "summaries"
     output_dir.mkdir()
     existing_file = output_dir / f"{project_id}_summary.txt"
     existing_file.write_text("Existing summary.")
-    
+
     with patch("src.extraction.summarizer.OpenAI"):
         results = generate_all_summaries(
             chunks_dir=chunks_dir,
@@ -547,7 +547,133 @@ def test_generate_all_summaries_skip_existing(tmp_path):
             num_chunks=2,
             overwrite=False,
         )
-        
+
+        assert len(results["generated"]) == 0
+        assert len(results["skipped"]) == 1
+        assert project_id in results["skipped"]
+
+
+# Tests for short_summarizer
+
+
+def test_short_summarizer_initialization():
+    """Test ShortSummarizer initialization."""
+    from src.extraction.short_summarizer import ShortSummarizer
+
+    with patch("src.extraction.short_summarizer.OpenAI") as mock_client:
+        summarizer = ShortSummarizer()
+        assert summarizer.client is not None
+        mock_client.assert_called_once()
+
+
+def test_generate_short_summary_success():
+    """Test successful short summary generation."""
+    from src.extraction.short_summarizer import ShortSummarizer
+
+    long_summary = "This is a long project summary about infrastructure development."
+
+    # Mock OpenAI response
+    with patch("src.extraction.short_summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = '{"summary": "Test project summary.", "geographic_scope": "Kenya, Tanzania"}'
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+
+        summarizer = ShortSummarizer()
+        result = summarizer.generate_short_summary(long_summary)
+
+        assert "summary" in result
+        assert "geographic_scope" in result
+        assert result["summary"] == "Test project summary."
+        assert result["geographic_scope"] == "Kenya, Tanzania"
+
+
+def test_generate_short_summary_invalid_response():
+    """Test short summary generation with invalid API response."""
+    from src.extraction.short_summarizer import ShortSummarizer
+
+    long_summary = "Test summary."
+
+    # Mock invalid OpenAI response (missing required keys)
+    with patch("src.extraction.short_summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = '{"summary": "Test."}'
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+
+        summarizer = ShortSummarizer()
+
+        with pytest.raises(ValueError, match="Invalid response structure"):
+            summarizer.generate_short_summary(long_summary)
+
+
+def test_generate_all_short_summaries(tmp_path):
+    """Test batch short summary generation."""
+    from src.extraction.short_summarizer import generate_all_short_summaries
+
+    # Create test long summaries for multiple projects
+    summaries_dir = tmp_path / "summaries"
+    summaries_dir.mkdir()
+
+    projects = ["P075941", "P119893"]
+    for project_id in projects:
+        summary_file = summaries_dir / f"{project_id}_summary.txt"
+        summary_file.write_text(f"Long summary for {project_id}.")
+
+    # Create output directory
+    output_dir = tmp_path / "short_summaries"
+
+    # Mock OpenAI responses
+    with patch("src.extraction.short_summarizer.OpenAI") as mock_client:
+        mock_response = Mock()
+        mock_response.output_text = (
+            '{"summary": "Short summary.", "geographic_scope": "Regional"}'
+        )
+        mock_client_instance = mock_client.return_value
+        mock_client_instance.responses.create.return_value = mock_response
+
+        # Test batch generation
+        results = generate_all_short_summaries(
+            summaries_dir=summaries_dir,
+            output_dir=output_dir,
+            overwrite=False,
+        )
+
+        assert len(results["generated"]) == 2
+        assert len(results["skipped"]) == 0
+        assert len(results["failed"]) == 0
+
+        # Verify output files were created
+        for project_id in projects:
+            output_file = output_dir / f"{project_id}.json"
+            assert output_file.exists()
+
+
+def test_generate_all_short_summaries_skip_existing(tmp_path):
+    """Test batch short summary generation with existing files."""
+    from src.extraction.short_summarizer import generate_all_short_summaries
+
+    # Create test summary
+    summaries_dir = tmp_path / "summaries"
+    summaries_dir.mkdir()
+
+    project_id = "P075941"
+    summary_file = summaries_dir / f"{project_id}_summary.txt"
+    summary_file.write_text("Long summary.")
+
+    # Create output directory with existing short summary
+    output_dir = tmp_path / "short_summaries"
+    output_dir.mkdir()
+    existing_file = output_dir / f"{project_id}.json"
+    existing_file.write_text('{"summary": "Existing.", "geographic_scope": "Regional"}')
+
+    with patch("src.extraction.short_summarizer.OpenAI"):
+        results = generate_all_short_summaries(
+            summaries_dir=summaries_dir,
+            output_dir=output_dir,
+            overwrite=False,
+        )
+
         assert len(results["generated"]) == 0
         assert len(results["skipped"]) == 1
         assert project_id in results["skipped"]
