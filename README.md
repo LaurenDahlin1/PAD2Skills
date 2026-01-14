@@ -114,7 +114,8 @@ Use the notebook [notebooks/99_single_project_pipeline.ipynb](notebooks/99_singl
 - **Progress indicators**: Prints ✓ ○ ✗ emoji indicators for each step (can be disabled)
 - **CSV output**: Saves detailed timing and status data to `data/silver/zz_status_timing/{project_id}_{timestamp}_timing.csv`
 
-#### Individual overwrite flags
+<details>
+<summary>Individual overwrite flags (17 options)</summary>
 
 By default, all overwrite flags are `False` (skip existing files). You can selectively enable overwrites:
 
@@ -136,6 +137,8 @@ By default, all overwrite flags are `False` (skip existing files). You can selec
 - `--ow-onet-prep` - Overwrite ESCO-ONET crosswalk (one-time setup)
 - `--ow-onet-merge` - Overwrite O*NET job zone merges
 
+</details>
+
 ---
 
 ### Individual Pipeline Steps
@@ -145,6 +148,9 @@ You can also run each pipeline step individually using the CLI modules below. Th
 ### Step 1: PDF to Markdown Conversion
 
 The first step in the pipeline converts PAD PDFs to markdown format with accurate table extraction using [docling](https://github.com/DS4SD/docling) and TableFormer.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Place PDFs in the input directory
 ```bash
@@ -170,7 +176,10 @@ uv run python -m src.pdf_conversion.cli --pdf yourfile.pdf
 data/silver/pads_md/
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing markdown files
@@ -183,17 +192,26 @@ uv run python -m src.pdf_conversion.cli --no-accurate-tables
 uv run python -m src.pdf_conversion.cli --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Convert all PDFs at once or specify individual files
 - **Smart skipping**: Automatically skips already-converted files (use `--overwrite` to force re-conversion)
 - **Accurate table extraction**: Uses TableFormer ACCURATE mode by default for better table handling
 - **Error resilience**: Continues processing if individual PDFs fail
+
+</details>
 
 For detailed API usage and Python integration, see [docs/pdf_conversion.md](docs/pdf_conversion.md).
 
 ### Step 2: Extract Document Sections
 
 The second step identifies and extracts the major sections (I., II., III., Annexes, etc.) from the PAD markdown files using OpenAI API.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Set up OpenAI API key
 ```bash
@@ -220,7 +238,10 @@ uv run python -m src.extraction.cli_sections --markdown P075941.md
 data/silver/document_sections/
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing section files
@@ -230,15 +251,24 @@ uv run python -m src.extraction.cli_sections --overwrite
 uv run python -m src.extraction.cli_sections --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all markdown files or specify individual files
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
 - **Error resilience**: Continues processing if individual files fail
 - **Structured output**: Saves sections as JSON with section IDs, titles, and header text
 
+</details>
+
 ### Step 3: Extract Abbreviations
 
 The third step extracts abbreviations and acronyms from the PAD markdown files using OpenAI API.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Run abbreviation extraction
 
@@ -258,7 +288,10 @@ uv run python -m src.extraction.cli_abbreviations --markdown P075941.md
 data/silver/abbreviations_md/
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing abbreviation files
@@ -268,15 +301,24 @@ uv run python -m src.extraction.cli_abbreviations --overwrite
 uv run python -m src.extraction.cli_abbreviations --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all markdown files or specify individual files
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
 - **Error resilience**: Continues processing if individual files fail
 - **Markdown output**: Saves abbreviations as clean markdown tables
 
+</details>
+
 ### Step 4: Create Chunked Markdown Files
 
 The fourth step splits the full PAD markdown files into separate chunks based on the extracted document sections, making it easier to process individual sections.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Run chunk creation
 
@@ -297,7 +339,10 @@ data/silver/pads_md_chunks/
 # Example: P075941_0_strategic_context.md, P075941_1_project_development_objectives.md
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing chunk files
@@ -307,18 +352,27 @@ uv run python -m src.extraction.cli_chunks --overwrite
 uv run python -m src.extraction.cli_chunks --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all markdown files or specify individual files
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-creation)
 - **Error resilience**: Continues processing if individual files fail
 - **Clean filenames**: Removes `_1` suffix from project IDs and uses snake_case section titles
 - **Section-based splitting**: Uses extracted section information to accurately split documents
 
+</details>
+
 **Note:** This step requires that section extraction (Step 2) has already been completed for the target files.
 
 ### Step 5: Generate PAD Summaries
 
 The fifth step generates concise summaries of PAD documents by combining abbreviations and the first four document sections, using OpenAI API.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Run summary generation
 
@@ -339,7 +393,10 @@ data/silver/pad_summaries/
 # Example: P075941_summary.txt
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing summary files
@@ -352,18 +409,27 @@ uv run python -m src.extraction.cli_summary --num-chunks 6
 uv run python -m src.extraction.cli_summary --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all projects or specify individual project IDs
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-generation)
 - **Error resilience**: Continues processing if individual projects fail
 - **Abbreviation integration**: Automatically incorporates abbreviations for better context
 - **Configurable chunks**: Control how many document chunks to include (default: 4)
 
+</details>
+
 **Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better summaries.
 
 ### Step 5b: Generate Short Summaries
 
 This step generates ultra-concise, one-sentence summaries and extracts geographic scope from the long PAD summaries created in Step 5. The output is structured JSON containing a brief summary and standardized geographic information.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Run short summary generation
 
@@ -392,7 +458,10 @@ data/silver/short_summary_json/
 }
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing short summary files
@@ -402,18 +471,27 @@ uv run python -m src.extraction.cli_short_summary --overwrite
 uv run python -m src.extraction.cli_short_summary --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all projects or specify individual project IDs
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-generation)
 - **Error resilience**: Continues processing if individual projects fail
 - **Structured output**: Saves as JSON with standardized fields
 - **Geographic normalization**: Standardizes country names and regional scopes
 
+</details>
+
 **Note:** This step requires that long summaries (Step 5) have already been created for the target projects. You must have an OpenAI API key configured in your `.env` file.
 
 ### Step 6: Extract Occupations and Skills
 
 The sixth step extracts occupations and skills from PAD document chunks using OpenAI API. This step analyzes each chunk to identify in-country occupations needed for project implementation.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Run occupation extraction
 
@@ -434,7 +512,10 @@ data/silver/occupations_skills_json/
 # Example: P075941_0_occupations.json, P075941_1_occupations.json
 ```
 
-#### Additional Options
+</details>
+
+<details>
+<summary>Additional options</summary>
 
 ```bash
 # Overwrite existing occupation files
@@ -444,7 +525,11 @@ uv run python -m src.extraction.cli_occupations --overwrite
 uv run python -m src.extraction.cli_occupations --config custom_config.yaml
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Batch processing**: Process all chunks or specify individual project IDs
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-extraction)
 - **Error resilience**: Continues processing if individual chunks fail
@@ -452,9 +537,12 @@ uv run python -m src.extraction.cli_occupations --config custom_config.yaml
 - **PAD summary integration**: Automatically incorporates PAD summaries for better context alignment
 - **Structured output**: Saves extracted occupations and skills as JSON with occupation titles, activities, and evidence quotes
 
+</details>
+
 **Note:** This step requires that chunks (Step 4) have already been created for the target projects. PAD summaries (Step 4a) and abbreviations (Step 3) are optional but recommended for better extraction results.
 
-#### Optional: Prepare PAD Occupations CSV
+<details>
+<summary>Optional: Prepare PAD Occupations CSV</summary>
 
 For inspection and debugging, you can prepare CSV files from the occupation JSON extractions. This creates intermediate CSV files with flattened extractions and combined text fields.
 
@@ -477,9 +565,14 @@ data/silver/occupation_skills_csv/
 
 **Note:** These CSV files are for inspection/debugging only and are not required for the production matching workflow (Step 7), which reads directly from the JSON files.
 
+</details>
+
 ### Step 7: Match PAD Occupations to ESCO
 
 The seventh step matches occupations extracted from PAD documents to the European Skills, Competences, Qualifications and Occupations (ESCO) taxonomy using semantic similarity. This step has two utilities: one for preparing ESCO data with embeddings, and another for matching PAD occupations to ESCO.
+
+<details>
+<summary>Usage</summary>
 
 #### 1. Prepare ESCO data (run once)
 
@@ -527,7 +620,10 @@ data/silver/esco_matching_csv/diagnostics/{project_id}_esco_matches_diagnostics.
 data/silver/esco_matching_json/{project_id}_000-074_esco_matches.json
 ```
 
-#### ESCO Preparation Options
+</details>
+
+<details>
+<summary>ESCO preparation options</summary>
 
 ```bash
 # Regenerate embeddings (if model changed or data updated)
@@ -537,7 +633,11 @@ uv run python -m src.matching.cli_prepare_esco --overwrite-embeddings
 uv run python -m src.matching.cli_prepare_esco --model intfloat/multilingual-e5-large
 ```
 
-#### Features
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Semantic matching**: Uses sentence-transformers for accurate occupation matching
 - **Cached embeddings**: ESCO embeddings are saved and reused for efficiency
 - **Top-K retrieval**: Returns the most similar ESCO occupations for each PAD occupation
@@ -545,13 +645,16 @@ uv run python -m src.matching.cli_prepare_esco --model intfloat/multilingual-e5-
 - **Chunked outputs**: Large result sets split into manageable JSON files
 - **Diagnostic mode**: Simplified CSV view for quick inspection
 
+</details>
+
 **Note:** This step requires that occupation extraction has been completed for the target projects. The ESCO preparation utility should be run once before matching any projects.
 
 ### Step 8: Select Best ESCO Match
 
 The eighth step uses OpenAI API to select the single best ESCO occupation match for each PAD occupation from the candidates identified in Step 7. The selection considers PAD activity descriptions, occupation titles, and contextual quotes to make informed decisions. After selection, a second utility creates a unique matches file that aggregates all PAD data for each unique ESCO occupation.
 
-#### 7a. Run ESCO selection
+<details>
+<summary>7a. Run ESCO selection</summary>
 
 **Select best matches for a specific project:**
 ```bash
@@ -587,7 +690,10 @@ data/silver/choose_esco_csv/{project_id}_esco_selections.csv
 - **Batch processing**: Processes all matching chunks automatically
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-selection)
 
-#### 7b. Create unique ESCO matches
+</details>
+
+<details>
+<summary>7b. Create unique ESCO matches</summary>
 
 **Generate unique matches for a specific project:**
 ```bash
@@ -624,13 +730,16 @@ data/silver/unique_esco_csv/{project_id}_unique_matched.csv
 - **Clean formatting**: Properly quoted and comma-separated lists
 - **Smart skipping**: Skips if output already exists
 
+</details>
+
 **Note:** This step requires that ESCO matching (Step 7) and ESCO selection (Step 8a) have been completed for the target project. You must have an OpenAI API key configured in your `.env` file.
 
 ### Step 9: Add NACE Industry Codes
 
 The ninth step enriches ESCO occupation matches with NACE (Statistical Classification of Economic Activities) industry codes. This step has two utilities: one for creating ESCO-NACE mappings from RDF data, and another for selecting the best NACE group for each ESCO occupation using semantic similarity.
 
-#### 8a. Create ESCO-NACE group mappings (run once)
+<details>
+<summary>8a. Create ESCO-NACE group mappings (run once)</summary>
 
 **Create ESCO-NACE group mappings from RDF:**
 ```bash
@@ -664,7 +773,10 @@ data/silver/esco_nace_csv/esco_nace_groups.csv
 data/silver/esco_nace_csv/inspect_esco_nace_groups.csv
 ```
 
-#### 8b. Select best NACE group for ESCO occupations
+</details>
+
+<details>
+<summary>8b. Select best NACE group for ESCO occupations</summary>
 
 **Select best NACE group for a specific project:**
 ```bash
@@ -698,7 +810,11 @@ uv run python -m src.nace.cli_select_nace --project-id P075941 \
 data/silver/unique_esco_nace_csv/{project_id}_unique_matched_with_nace.csv
 ```
 
-**Features:**
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **RDF parsing**: Extracts complete NACE hierarchy from RDF data
 - **Code expansion**: Automatically expands section/division codes to groups
 - **Semantic matching**: Uses embeddings for accurate industry classification
@@ -706,13 +822,16 @@ data/silver/unique_esco_nace_csv/{project_id}_unique_matched_with_nace.csv
 - **Candidate filtering**: Only considers valid NACE groups for each ESCO occupation
 - **Complete metadata**: Includes section, division, and group labels
 
+</details>
+
 **Note:** Step 9a (ESCO-NACE mapper) should be run once before processing any projects. Step 9b requires that unique ESCO matches (Step 8b) have been created for the target project.
 
 ### Step 10: Refine ESCO Skills
 
 The tenth step refines ESCO skills by evaluating their relevance to the specific PAD project context. This step loads ESCO occupations with NACE codes, merges with skills from the ESCO skills relation table, and uses OpenAI API to evaluate which skills are relevant and identify the top five most important skills for each occupation.
 
-#### Run skills refinement
+<details>
+<summary>Usage</summary>
 
 **Refine skills for a specific project:**
 ```bash
@@ -750,7 +869,11 @@ This utility:
 - Returns boolean flags: `relevant` (skill is relevant to project) and `top_five` (one of the 5 most important skills)
 - Saves results as CSV with all ESCO metadata, skill details, and evaluation results
 
-**Features:**
+</details>
+
+<details>
+<summary>Features</summary>
+
 - **Context-aware evaluation**: Uses PAD project summary and occupation details
 - **Batch processing**: Processes multiple occupations per API call for efficiency
 - **Essential skills focus**: Only evaluates essential ESCO skills (not optional)
@@ -758,13 +881,16 @@ This utility:
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-processing)
 - **Configurable chunking**: Adjust chunk size to balance API efficiency and rate limits
 
+</details>
+
 **Note:** This step requires that ESCO occupations with NACE codes (Step 9b) and PAD summaries (Step 5) have been created for the target project. You must have an OpenAI API key configured in your `.env` file.
 
 ### Step 11: Add O*NET Education Levels
 
 The twelfth step enriches ESCO occupation data with O*NET job zones, which indicate education and experience requirements. This step has two utilities: one for creating the ESCO-ONET crosswalk with LLM-generated substitutions for missing values (run once), and another for merging job zones onto project files.
 
-#### 11a. Create ESCO-ONET crosswalk (run once)
+<details>
+<summary>11a. Create ESCO-ONET crosswalk (run once)</summary>
 
 **Create the crosswalk with job zones:**
 ```bash
@@ -808,7 +934,10 @@ data/silver/clean_esco/esco_onet_job_zones.csv
 - **Comprehensive coverage**: Ensures all ESCO occupations have job zone assignments
 - **Smart skipping**: Skips if output already exists (use `--overwrite` to force recreation)
 
-#### 11b. Merge job zones onto project files
+</details>
+
+<details>
+<summary>11b. Merge job zones onto project files</summary>
 
 **Merge for a specific project:**
 ```bash
@@ -850,6 +979,8 @@ data/silver/unique_esco_nace_onet_csv/{project_id}_esco_nace_onet.csv
 - **Descriptive labels**: Includes human-readable job zone labels
 - **Method transparency**: Shows whether job zone came from O*NET or LLM estimate
 - **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-merge)
+
+</details>
 
 ### Step 13: Create final data files
 - Final data file creation is currently located in notebooks 10 and 11.
