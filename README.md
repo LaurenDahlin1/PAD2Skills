@@ -16,6 +16,7 @@ PDF → Markdown → LLM Extraction → Structured Output → Visualization
 ## Project Status
 
 ### ✅ Completed
+- **Single-Project Pipeline Orchestrator**: Run all pipeline steps end-to-end for a single project with timing and status tracking
 - **PDF to Markdown Conversion**: Converts PAD PDFs to markdown using [docling](https://github.com/DS4SD/docling) with TableFormer for accurate table extraction
 - **Document Section Extraction**: Identifies and extracts major document sections from PADs using OpenAI API
 - **Abbreviation Extraction**: Extracts abbreviations and acronyms tables from PAD documents
@@ -69,6 +70,77 @@ For more installation options, see the [uv documentation](https://docs.astral.sh
    ```
 
 ## Usage
+
+### Running the Full Pipeline
+
+For most use cases, you'll want to run all pipeline steps end-to-end for a single project. The single-project pipeline orchestrator automates this process and tracks timing and status for each step.
+
+#### Run pipeline for a single project
+
+**Basic usage (skip existing files):**
+```bash
+uv run python -m src.pipeline.cli P075941
+```
+
+**Overwrite all existing files:**
+```bash
+uv run python -m src.pipeline.cli P075941 --overwrite-all
+```
+
+**Overwrite specific steps:**
+```bash
+uv run python -m src.pipeline.cli P075941 --ow-pdf --ow-sections --ow-occupations
+```
+
+**Disable progress output:**
+```bash
+uv run python -m src.pipeline.cli P075941 --no-progress
+```
+
+#### Run pipeline for multiple projects
+
+Use the notebook [notebooks/99_single_project_pipeline.ipynb](notebooks/99_single_project_pipeline.ipynb) to:
+1. Load and filter projects from CSV
+2. Define overwrite flags at the top
+3. Loop through projects, running the full pipeline for each
+4. Aggregate and analyze timing results
+
+#### Pipeline features
+
+- **All 13 steps**: Runs complete pipeline from PDF conversion through O*NET job zone merging
+- **Timing tracking**: Records start time, end time, and elapsed minutes for each step
+- **Status tracking**: Tracks whether files were newly created, skipped (already exist), or overwritten
+- **Error resilience**: Continues through remaining steps if errors occur, logs failures
+- **Progress indicators**: Prints ✓ ○ ✗ emoji indicators for each step (can be disabled)
+- **CSV output**: Saves detailed timing and status data to `data/silver/zz_status_timing/{project_id}_{timestamp}_timing.csv`
+
+#### Individual overwrite flags
+
+By default, all overwrite flags are `False` (skip existing files). You can selectively enable overwrites:
+
+- `--ow-pdf` - Overwrite PDF conversions
+- `--ow-sections` - Overwrite section extractions
+- `--ow-abbr` - Overwrite abbreviation extractions
+- `--ow-chunks` - Overwrite markdown chunks
+- `--ow-long-summary` - Overwrite long summaries
+- `--ow-short-summary` - Overwrite short summaries
+- `--ow-occupations` - Overwrite occupation extractions
+- `--ow-occs-csv` - Overwrite occupation CSV files
+- `--ow-esco-prep` - Overwrite ESCO embeddings (one-time setup)
+- `--ow-esco-match` - Overwrite ESCO matching results
+- `--ow-esco-select` - Overwrite ESCO selections
+- `--ow-unique-esco` - Overwrite unique ESCO matches
+- `--ow-nace-prep` - Overwrite ESCO-NACE groups (one-time setup)
+- `--ow-nace-select` - Overwrite NACE selections
+- `--ow-skills` - Overwrite skills refinements
+- `--ow-onet-prep` - Overwrite ESCO-ONET crosswalk (one-time setup)
+- `--ow-onet-merge` - Overwrite O*NET job zone merges
+
+---
+
+### Individual Pipeline Steps
+
+You can also run each pipeline step individually using the CLI modules below. This is useful for debugging or processing specific stages.
 
 ### Step 1: PDF to Markdown Conversion
 
@@ -288,6 +360,56 @@ uv run python -m src.extraction.cli_summary --config custom_config.yaml
 - **Configurable chunks**: Control how many document chunks to include (default: 4)
 
 **Note:** This step requires that chunks (Step 4) have already been created for the target projects. Abbreviations (Step 3) are optional but recommended for better summaries.
+
+### Step 5b: Generate Short Summaries
+
+This step generates ultra-concise, one-sentence summaries and extracts geographic scope from the long PAD summaries created in Step 5. The output is structured JSON containing a brief summary and standardized geographic information.
+
+#### 1. Run short summary generation
+
+**Generate short summaries for all projects:**
+```bash
+uv run python -m src.extraction.cli_short_summary
+```
+
+**Generate short summary for a specific project:**
+```bash
+uv run python -m src.extraction.cli_short_summary --project P075941
+```
+
+#### 2. Check the output
+```bash
+# Short summary JSON files are saved to:
+data/silver/short_summary_json/
+# Example: P075941.json
+```
+
+**Example output:**
+```json
+{
+  "summary": "Kenya Agriculture and Climate Risk Enterprise finances agricultural productivity improvements and climate resilience through training, inputs, and market linkages.",
+  "geographic_scope": "Kenya"
+}
+```
+
+#### Additional Options
+
+```bash
+# Overwrite existing short summary files
+uv run python -m src.extraction.cli_short_summary --overwrite
+
+# Use custom config file
+uv run python -m src.extraction.cli_short_summary --config custom_config.yaml
+```
+
+#### Features
+- **Batch processing**: Process all projects or specify individual project IDs
+- **Smart skipping**: Automatically skips already-processed files (use `--overwrite` to force re-generation)
+- **Error resilience**: Continues processing if individual projects fail
+- **Structured output**: Saves as JSON with standardized fields
+- **Geographic normalization**: Standardizes country names and regional scopes
+
+**Note:** This step requires that long summaries (Step 5) have already been created for the target projects. You must have an OpenAI API key configured in your `.env` file.
 
 ### Step 6: Extract Occupations and Skills
 
@@ -765,7 +887,8 @@ PAD2Skills/
 │   │   ├── unique_esco_nace_csv/  # ESCO matches with NACE codes (CSV)
 │   │   ├── unique_esco_nace_onet_csv/  # ESCO matches with NACE codes and O*NET job zones (CSV)
 │   │   ├── esco_nace_w_skills_csv/  # ESCO with NACE codes and refined skills (CSV)
-│   │   └── occupations_skills_json/  # Extracted occupations/skills (JSON)
+│   │   ├── occupations_skills_json/  # Extracted occupations/skills (JSON)
+│   │   └── zz_status_timing/   # Pipeline timing and status tracking (CSV)
 │   └── gold/            # Final structured outputs
 ├── docs/                # Documentation
 │   ├── notes.md        # Development notes
@@ -773,9 +896,11 @@ PAD2Skills/
 ├── notebooks/           # Jupyter notebooks for exploration
 │   ├── 01_test_pdf_conversion.ipynb
 │   ├── 02_document_sections.ipynb
-│   └── 99_pipeline.ipynb
+│   ├── 98_multi_project_pipeline.ipynb   # Multi-project batch processing
+│   └── 99_single_project_pipeline.ipynb  # Single-project end-to-end processing
 ├── src/                 # Source code
 │   ├── config.py       # Configuration management
+│   ├── pipeline/       # Pipeline orchestration
 │   ├── pdf_conversion/ # PDF to markdown conversion
 │   ├── extraction/     # Document section and abbreviation extraction
 │   ├── matching/       # ESCO occupation matching
