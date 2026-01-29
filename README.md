@@ -1111,4 +1111,4 @@ See the [LICENSE](LICENSE) file for full details.
 
 ## Contact
 
-[Lauren Dahlin](https://github.com/LaurenDahlin1)
+[Lauren Dahlin](www.laurendahlin.com)
